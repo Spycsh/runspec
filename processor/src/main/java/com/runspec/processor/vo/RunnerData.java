@@ -1,4 +1,4 @@
-package com.runspec.producer;
+package com.runspec.processor.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

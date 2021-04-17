@@ -1,11 +1,11 @@
-# RunSpec
-*specify and specialize your running plan*
+# RunSpec - ID2012 project
+*specialize your running plan*
 
 > Sihan Chen sihanc@kth.se  
 Yuehao Sui yuehao@kth.se  
 Zidi Chen zidi@kth.se
 
-Our project is divided into three parts:
+Our project is to create a running App which records and displays real-time runners' running data (produced by the built-in sensor of a mobile phone) on his/her mobile phone and and offer appropriate running advices based on the running data. The main technology stack involves but is not limitted to Android, Kafka, Spark, MongoDB. The implementation can be divided into three parts:
 
 ## Running Data producer
 
@@ -28,12 +28,14 @@ Considering the voluminous real-time messages produced from different runners. W
 
 During the calculation, we plan to use **Spark** as the distributed computing component because of its powerful processing capacity of streaming data.
 
-We will firstly judge whether it is appropriate to run. The initial idea is to get the air quality data from [API](https://aqicn.org/city/sweden/stockholm-lilla-essingen/) with the latitude and longitude produced by the sensor. Then, we can research some papers and code the relationship between a healthy run and factors such as AQI (air quality, PM2.5), humidity, temperature, heart rate. For example, if we find a user's region has serious air quality (PM2.5 index > 100), then we will write in the advice as a feedback to the user. Also the server may calculate the speed and distance and return the result to frontend.
+We will firstly judge whether it is appropriate to run. The initial idea is to get the air quality data from [API](https://aqicn.org/city/sweden/stockholm-lilla-essingen/) with the latitude and longitude produced by the sensor. Then, we can research some papers and code the relationship between a healthy run and factors such as AQI (air quality, PM2.5), humidity, temperature, heart rate. For example, if we find a user's region has serious air quality (PM2.5 index > 100), then we will write in the advice that it is not suitable to run at that time as a feedback to the user. Also the server may calculate the speed and distance and return the result to frontend.
 
 We also use Spark to store the voluminous data into the MongoDB database (Maybe Redis will be used to cache the data). From the database runners can extract the running history (optional). Of course a login function must be provided to differentiate between different users.
 
+
+
 ## Android Dashboard
-An android App will be created to read the data from the sensor in the mobile phone and give the user a operating interface and also display the feedback. When the user wants to start running, he/she may first click a query button and it will send the runner's data to the backend to process and give feedback to the runner that whether it is appropriate to run based on the weather of current location. After the user start to run, for every 10 seconds, the user data will be sent to the backend and processed and the feedback will show the speed and the total distance that the user has runned. When the user end running, he will choose to store or delete this trip data in the database.
+An android App will be created to read the data from the sensor in the mobile phone and give the user a operating interface and also display the feedback. When the user wants to start running, he/she may first click a query button and it will send the runner's data to the backend to process and give feedback to the runner that whether it is appropriate to run based on the weather of current location. After the user start to run, for every 10 seconds (may be adjusted in real development), the user data will be sent to the backend and processed and the feedback will show the speed and the total distance that the user has runned. When the user end running, he can choose to store or delete this trip data in the database.
 
 
 
