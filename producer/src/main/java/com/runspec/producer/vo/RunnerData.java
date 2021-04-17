@@ -39,6 +39,13 @@ public class RunnerData implements Serializable {
         this.heartRate = heartRate;
     }
 
+    public RunnerData(String userId, String longitude, String latitude, Date timestamp){
+        this.userId = userId;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.timestamp = timestamp;
+    }
+
     public String getUserId() {
         return userId;
     }
