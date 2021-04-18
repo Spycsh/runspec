@@ -1,0 +1,29 @@
+jdk 1.8
+
+
+###########To see mongo#################
+=> mongo
+> show dbs
+> use runspec
+> show tables
+> db.User.find().count()
+
+
+
+#############To see Kafka#################
+
+You should open the zookeeper, Kafka server and the Kafka producer
+In one cmd, open the zookeeper
+=> C:\kafka\bin\windows>zookeeper-server-start.bat ..\..\config\zookeeper.properties
+then open the Kafka
+=> C:\kafka\bin\windows>kafka-server-start.bat ..\..\config\server.properties
+you can use jps to see the on-going java processes
+=> C:\Users\Spycsh>jps
+  11808 StreamingRecommender
+  14100
+  21844 NailgunRunner
+  11928 Jps
+  15560 QuorumPeerMain
+  20860 Kafka
+
+

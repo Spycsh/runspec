@@ -1,6 +1,5 @@
 package com.runspec.processor.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.runspec.processor.vo.RunnerData;
 import kafka.serializer.Decoder;

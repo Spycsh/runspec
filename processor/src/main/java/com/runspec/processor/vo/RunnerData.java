@@ -28,6 +28,19 @@ public class RunnerData implements Serializable {
     private double distance;
     private int heartRate;
 
+    // must clarify here the default constructor
+    // https://www.jianshu.com/p/d9613b717059
+    public RunnerData(){
+
+    }
+
+    public RunnerData(String userId, String longitude, String latitude, Date timestamp){
+        this.userId = userId;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.timestamp = timestamp;
+    }
+
     public RunnerData(String userId, String longitude, String latitude, String altitude, Date timestamp, String stepCount, double distance, int heartRate) {
         this.userId = userId;
         this.longitude = longitude;
@@ -38,6 +51,8 @@ public class RunnerData implements Serializable {
         this.distance = distance;
         this.heartRate = heartRate;
     }
+
+
 
     public String getUserId() {
         return userId;
