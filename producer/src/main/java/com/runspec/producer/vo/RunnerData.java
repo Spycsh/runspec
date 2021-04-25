@@ -1,9 +1,11 @@
 package com.runspec.producer.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.bson.types.ObjectId;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * This is the class to represent the runner data
@@ -18,6 +20,7 @@ import java.util.Date;
  * heartRate
  */
 public class RunnerData implements Serializable {
+    private String tripId;
     private String userId;
     private String longitude;
     private String latitude;
@@ -34,7 +37,8 @@ public class RunnerData implements Serializable {
 
     }
 
-    public RunnerData(String userId, String longitude, String latitude, String altitude, Date timestamp, String stepCount, double distance, int heartRate) {
+    public RunnerData(String tripId, String userId, String longitude, String latitude, String altitude, Date timestamp, String stepCount, double distance, int heartRate) {
+        this.tripId = tripId;
         this.userId = userId;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -45,7 +49,8 @@ public class RunnerData implements Serializable {
         this.heartRate = heartRate;
     }
 
-    public RunnerData(String userId, String longitude, String latitude, Date timestamp){
+    public RunnerData(String tripId, String userId, String longitude, String latitude, Date timestamp){
+        this.tripId = tripId;
         this.userId = userId;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -110,6 +115,14 @@ public class RunnerData implements Serializable {
 
     public int getHeartRate() {
         return heartRate;
+    }
+
+    public String getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
     }
 
     public void setHeartRate(int heartRate) {

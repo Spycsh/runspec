@@ -8,6 +8,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 //import org.apache.kafka.clients.producer.Producer;
 import kafka.javaapi.producer.Producer;
 import com.runspec.producer.util.PropertyFileReader;
+import org.bson.types.ObjectId;
 
 import java.util.*;
 
@@ -58,13 +59,17 @@ public class RunnerDataProducer {
         while(true){
             List<RunnerData> eventList = new ArrayList<RunnerData>();
             for(int i=0; i<100; i++){   // create 100 runners
+                // runnerId should be got from front end
                 String runnerId = UUID.randomUUID().toString();
+
+                // generate Mongo objectId for one trip
+                String tripId = UUID.randomUUID().toString();
 
                 for(int j=0;j<5;j++){   //for each runner, create 5 runner data
                     String latitude = "30.41" + rand.nextInt(30);
                     String longitude = "15.23" + rand.nextInt(10);
                     Date aDate = new Date();
-                    RunnerData event = new RunnerData(runnerId, longitude, latitude, aDate);
+                    RunnerData event = new RunnerData(tripId, runnerId, longitude, latitude, aDate);
                     eventList.add(event);
                 }
             }

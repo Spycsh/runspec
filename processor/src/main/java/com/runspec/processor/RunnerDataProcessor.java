@@ -1,5 +1,8 @@
 package com.runspec.processor;
 
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.runspec.processor.util.PropertyFileReader;
 import com.runspec.processor.util.RunnerDataDecoder;
 import com.runspec.processor.vo.RunnerData;
@@ -14,6 +17,7 @@ import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka.KafkaUtils;
+import org.bson.Document;
 import scala.Tuple2;
 
 import org.apache.spark.api.java.function.Function;
@@ -24,6 +28,13 @@ import java.util.*;
 
 
 public class RunnerDataProcessor {
+    MongoClient mongoClient;
+    MongoDatabase mongoDatabase;
+
+    // get the table
+    MongoCollection<Document> collection;
+
+
     public static void main(String[] args) throws Exception {
         // create Spark Config
         System.out.println("create Spark Config...");
@@ -69,26 +80,44 @@ public class RunnerDataProcessor {
         //cache stream as it is used in total and window based computation
         msgDataStream.cache();
 
+        RunnerDataProcessor rdp = new RunnerDataProcessor();
+        // try to connect to mongoDB
+        try{
+            rdp.mongoClient = new MongoClient("localhost", 27017);
+            rdp.mongoDatabase = rdp.mongoClient.getDatabase("runspec-test");
+            rdp.collection = rdp.mongoDatabase.getCollection("test");
+            System.out.println("Connect to database successfully");
+        }catch (Exception e){
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+        }
+
 
         // process data
         msgDataStream.foreachRDD((JavaRDD<RunnerData> rdds) -> {
             if(!rdds.isEmpty()){
                 System.out.println("Runner Data coming >>>>>>>");
-                rdds.collect().forEach(data->System.out.println(data.getLongitude()));
+
+//                rdds.collect().forEach(data->System.out.println(data.getLongitude()));
+                rdds.collect().forEach(data->rdp.storeInMongo(data));
             }
 
-//            rdd.collect().forEach(data -> System.out.println(data.getLongitude()));
-
-//            rdd.collect().forEach(n -> System.out.println(n.getLongitude()));
-//            rdd.collect().stream().forEach(n -> System.out.println(n));
         });
-
-
 
         //start context
         jssc.start();
         jssc.awaitTermination();
 
+    }
+
+    private void storeInMongo(RunnerData data){
+//        this.mongoClient
+
+        Document document = new Document("tripId",data.getTripId()).
+                append("userId",data.getUserId()).
+                append("longitude", data.getLongitude()).
+                append("latitude", data.getLatitude());
+//        try
+        collection.insertOne(document);
     }
 
 
