@@ -1,4 +1,4 @@
-# RunSpec - ID2012 project
+# RunSpec
 *specialize your running plan*
 
 Sihan Chen sihanc@kth.se  
