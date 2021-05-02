@@ -66,8 +66,8 @@ public class RunnerDataProducer {
                 String tripId = UUID.randomUUID().toString();
 
                 for(int j=0;j<5;j++){   //for each runner, create 5 runner data
-                    String latitude = "30.41" + rand.nextInt(30);
-                    String longitude = "15.23" + rand.nextInt(10);
+                    String latitude = "59.38" + rand.nextInt(9);
+                    String longitude = "18.02" + rand.nextInt(9);
                     Date aDate = new Date();
                     RunnerData event = new RunnerData(tripId, runnerId, longitude, latitude, aDate);
                     eventList.add(event);

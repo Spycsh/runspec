@@ -1,19 +1,26 @@
 package com.runspec.processor;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
+import com.runspec.processor.entity.POIRunnerData;
+import com.runspec.processor.util.GeoDistanceCalculator;
 import com.runspec.processor.util.PropertyFileReader;
 import com.runspec.processor.util.RunnerDataDecoder;
+import com.runspec.processor.vo.POIData;
 import com.runspec.processor.vo.RunnerData;
 import kafka.serializer.StringDecoder;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.VoidFunction2;
+import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.Time;
 import org.apache.spark.streaming.api.java.JavaDStream;
+import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka.KafkaUtils;
@@ -21,6 +28,8 @@ import org.bson.Document;
 import scala.Tuple2;
 
 import org.apache.spark.api.java.function.Function;
+import scala.Tuple3;
+import scala.tools.nsc.Global;
 import scala.util.parsing.json.JSONObject;
 
 
@@ -32,7 +41,8 @@ public class RunnerDataProcessor {
     MongoDatabase mongoDatabase;
 
     // get the table
-    MongoCollection<Document> collection;
+    MongoCollection<Document> runnerData_collection;
+    MongoCollection<Document> runnerPOIData_collection;
 
 
     public static void main(String[] args) throws Exception {
@@ -84,24 +94,33 @@ public class RunnerDataProcessor {
         // try to connect to mongoDB
         try{
             rdp.mongoClient = new MongoClient("localhost", 27017);
-            rdp.mongoDatabase = rdp.mongoClient.getDatabase("runspec-test");
-            rdp.collection = rdp.mongoDatabase.getCollection("test");
+            rdp.mongoDatabase = rdp.mongoClient.getDatabase("runspec-0502");
+            rdp.runnerData_collection = rdp.mongoDatabase.getCollection("runnerData");
+            rdp.runnerPOIData_collection = rdp.mongoDatabase.getCollection("runnerPOIData");
             System.out.println("Connect to database successfully");
         }catch (Exception e){
             System.err.println(e.getClass().getName()+": "+e.getMessage());
         }
 
 
-        // process data
-        msgDataStream.foreachRDD((JavaRDD<RunnerData> rdds) -> {
-            if(!rdds.isEmpty()){
-                System.out.println("Runner Data coming >>>>>>>");
 
-//                rdds.collect().forEach(data->System.out.println(data.getLongitude()));
-                rdds.collect().forEach(data->rdp.storeInMongo(data));
-            }
+        rdp.processRunnerData(msgDataStream);
 
-        });
+        // home 59.382831, 18.026270
+        // process poi data
+        // TODO here requires a new dataloader class to initialize the default POIData and here
+        //  only read the data from mongo. So here should be a list of POI to broadcast!!
+        POIData poiData = new POIData();
+        poiData.setPOIId(UUID.randomUUID().toString());
+        poiData.setLatitude(59.382831);
+        poiData.setLongitude(18.026270);
+        poiData.setRadius(0.5); // 500 meters
+        //  Broadcast variables allow the programmer to keep a read-only variable cached on each machine
+        //  rather than shipping a copy of it with tasks
+        Broadcast<POIData> broadcastPOIValues = jssc.sparkContext().
+                broadcast(poiData);
+
+        rdp.processPOIData(msgDataStream, broadcastPOIValues);
 
         //start context
         jssc.start();
@@ -109,16 +128,122 @@ public class RunnerDataProcessor {
 
     }
 
-    private void storeInMongo(RunnerData data){
-//        this.mongoClient
+    /**
+     * save the runner data (tripId, runnerId, longitude, latitude) into mongo
+     * @param msgDataStream
+     */
+    private void processRunnerData(JavaDStream<RunnerData> msgDataStream){
+        System.out.println("xxxxxxxxxxxxxxxxxxx");
+        msgDataStream.foreachRDD((JavaRDD<RunnerData> rdds) -> {
+            if(!rdds.isEmpty()){
+                System.out.println("Runner Data coming >>>>>>>");
 
-        Document document = new Document("tripId",data.getTripId()).
+//                rdds.collect().forEach(data->System.out.println(data.getLongitude()));
+                rdds.collect().forEach(data -> storeInMongo(data));
+            }
+
+        });
+    }
+
+    /**
+     * Method to get the vehicles which are in radius of POI and their distance from POI.
+     *
+     * @param msgDataStream original IoT data stream
+     * @param broadcastPOIValues variable containing POI coordinates, route and vehicle types to monitor.
+     */
+    public void processPOIData(JavaDStream<RunnerData> msgDataStream, Broadcast<POIData> broadcastPOIValues) {
+        JavaDStream<RunnerData> runnerDataStreamFiltered = msgDataStream
+                .filter(rd -> GeoDistanceCalculator.isInPOIRadius(
+                        Double.valueOf(rd.getLatitude()),
+                        Double.valueOf(rd.getLongitude()),
+                        broadcastPOIValues.value().getLatitude(),
+                        broadcastPOIValues.value().getLongitude(),
+                        broadcastPOIValues.value().getRadius()
+                ));
+
+
+        // pair with poi
+        // TODO should be a list of POI Values here
+        JavaPairDStream<RunnerData, POIData> poiDStreamPair = runnerDataStreamFiltered
+                .mapToPair(runnerData -> new Tuple2<>(runnerData, broadcastPOIValues.value()));
+
+        // Transform to dstream of POIRunner
+        JavaDStream<POIRunnerData> poiRunnerDataJavaDStream = poiDStreamPair.map(poiRunnerDataFunc);
+
+        // store into mongo
+        poiRunnerDataJavaDStream.foreachRDD((JavaRDD<POIRunnerData> rdds) -> {
+            if(!rdds.isEmpty()){
+                System.out.println("Runner Data coming >>>>>>>");
+
+//                rdds.collect().forEach(data->System.out.println(data.getLongitude()));
+                rdds.collect().forEach(data -> storeInMongo(data));
+            }
+
+        });
+
+    }
+
+    //Function to create POITrafficData object from IoT data
+    private static final Function<Tuple2<RunnerData, POIData>, POIRunnerData> poiRunnerDataFunc = (tuple -> {
+        POIRunnerData poiRunnerData = new POIRunnerData();
+        poiRunnerData.setTripId(tuple._1.getTripId());
+        poiRunnerData.setPOIId(tuple._2.getPOIId());
+        poiRunnerData.setUserId(tuple._1.getUserId());
+        // get the timestamp of the runner data
+        poiRunnerData.setTimeStamp(tuple._1.getTimestamp());
+
+        double distance = GeoDistanceCalculator.getDistance(
+                Double.valueOf(tuple._1.getLatitude()),
+                Double.valueOf(tuple._1.getLongitude()),
+                tuple._2.getLatitude(),
+                tuple._2.getLongitude()
+        );
+        System.out.println("Distance for " + tuple._1.getLatitude() + "," + tuple._1.getLongitude() + ","+
+                tuple._2.getLatitude() + "," + tuple._2.getLongitude() + " = " + distance);
+        poiRunnerData.setDistance(distance);
+        return poiRunnerData;
+    });
+
+    private void storeInMongo(RunnerData data){
+
+
+        Document document = new Document("tripId", data.getTripId()).
                 append("userId",data.getUserId()).
                 append("longitude", data.getLongitude()).
                 append("latitude", data.getLatitude());
 //        try
-        collection.insertOne(document);
+        System.out.println("---insert into Mongo---"+document.toString());
+        runnerData_collection.insertOne(document);
     }
 
+    // insert
 
+    /**
+     *  use tripId, userId, poiId to distinguish the situation when
+     *  a runner is beside one POI in one trip
+     *  first search if there is one record with the same tripId, userId, poiId, if there is, update it
+     *  else insert it
+     * @param data
+     */
+    private void storeInMongo(POIRunnerData data){
+        // https://blog.csdn.net/u013174217/article/details/54576109
+        BasicDBObject searchQuery = new BasicDBObject()
+                .append("tripId", data.getTripId())
+                .append("userId", data.getUserId())
+                .append("poiId", data.getPOIId());
+
+
+        Document newDocument = new Document()
+                        .append("tripId", data.getTripId())
+                        .append("userId", data.getUserId())
+                        .append("poiId", data.getPOIId())
+                        .append("distance", data.getDistance())
+                        .append("timestamp", data.getTimeStamp());
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+        // try
+        // upsert
+        System.out.println("---update document---"+newDocument.toString());
+        runnerPOIData_collection.replaceOne(searchQuery, newDocument, options);
+    }
 }
