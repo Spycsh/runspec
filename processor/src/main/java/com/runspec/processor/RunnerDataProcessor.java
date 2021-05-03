@@ -15,10 +15,8 @@ import kafka.serializer.StringDecoder;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.VoidFunction2;
 import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.Time;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
@@ -28,9 +26,6 @@ import org.bson.Document;
 import scala.Tuple2;
 
 import org.apache.spark.api.java.function.Function;
-import scala.Tuple3;
-import scala.tools.nsc.Global;
-import scala.util.parsing.json.JSONObject;
 
 
 import java.util.*;
@@ -133,7 +128,6 @@ public class RunnerDataProcessor {
      * @param msgDataStream
      */
     private void processRunnerData(JavaDStream<RunnerData> msgDataStream){
-        System.out.println("xxxxxxxxxxxxxxxxxxx");
         msgDataStream.foreachRDD((JavaRDD<RunnerData> rdds) -> {
             if(!rdds.isEmpty()){
                 System.out.println("Runner Data coming >>>>>>>");
@@ -190,7 +184,7 @@ public class RunnerDataProcessor {
         poiRunnerData.setPOIId(tuple._2.getPOIId());
         poiRunnerData.setUserId(tuple._1.getUserId());
         // get the timestamp of the runner data
-        poiRunnerData.setTimeStamp(tuple._1.getTimestamp());
+        poiRunnerData.setTimestamp(tuple._1.getTimestamp());
 
         double distance = GeoDistanceCalculator.getDistance(
                 Double.valueOf(tuple._1.getLatitude()),
@@ -238,7 +232,7 @@ public class RunnerDataProcessor {
                         .append("userId", data.getUserId())
                         .append("poiId", data.getPOIId())
                         .append("distance", data.getDistance())
-                        .append("timestamp", data.getTimeStamp());
+                        .append("timestamp", data.getTimestamp());
 
         UpdateOptions options = new UpdateOptions().upsert(true);
         // try

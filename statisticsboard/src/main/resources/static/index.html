@@ -1,0 +1,130 @@
+<html>
+
+<head>
+	<title>Runner Statistics board</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<!--	<link rel="stylesheet" type="text/css" href="css/style.css">-->
+</head>
+
+<body>
+	<div class="container-fluid">
+
+	</div>
+
+	<div class="row">
+
+		<div class="col-md-4">
+<!--			<table class="table outerTable">-->
+<!--				<thead>-->
+<!--				<tr>-->
+<!--					<th>POI Vehicle Chart</th>-->
+<!--				</tr>-->
+<!--				</thead>-->
+<!--				<tbody>-->
+<!--				<tr>-->
+<!--					<td><canvas id="poiTrafficChart"></canvas></td>-->
+<!--				</tr>-->
+<!--				</tbody>-->
+<!--			</table>-->
+			<table class="table outerTable">
+				<thead>
+				<tr>
+					<th>Trucks At POI</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td>
+						<div id="runnerPOIData">
+							<table class="table table-bordered table-condensed table-hover innerTable">
+								<tr>
+									<thead>
+									<th>Trip Id</th><th>Runner Id</th><th>POI Id</th><th>Distance</th><th>Time</th>
+									</thead>
+								</tr>
+							</table>
+						</div>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="js/sockjs-1.1.1.min.js"></script>
+	<script type="text/javascript" src="js/stomp.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>`
+<!--	<script type="text/javascript" src="js/Chart.min.js"></script>-->
+
+	<script type="text/javascript">
+		// var poiRunnerChartData={
+		// 	labels: ["Runner"],
+		// 	datasets: [{
+		// 		data: [1]
+		// 	}]
+		// };
+
+		jQuery(document).ready(function(){
+			//Charts
+			// var chart1 = document.getElementById("poiRunnerChart").getContext("2d");
+
+
+			// tables
+			var poiRunnerList = jQuery("#runnerPOIData");
+
+			// use sockjs
+			var socket = new SockJS('/stomp');
+			var stompClient = Stomp.over(socket);
+
+			stompClient.connect({ }, function(frame){
+				//subscribe "/topic/runnerPOIData" message
+				stompClient.subscribe("/topic/runnerPOIData", function(data){
+					var dataList = data.body;
+					var response = jQuery.parseJSON(dataList);
+
+					// POI data
+					var poiOutput = '';
+					jQuery.each(response.poiRunnerData, function(i, prd){
+						poiOutput +="<tbody><tr><td>"+ prd.tripId +
+								"</td><td>"+ prd.userId+
+								"</td><td>"+ prd.POIId+
+								"</td><td>"+ prd.distance+
+								"</td><td>"+ prd.timestamp+
+								"</td></tr></tbody>";
+					});
+					var p_tabl_start = "<table class='table table-bordered table-condensed table-hover innerTable'><thead><tr><th>Vehicle Id</th><th>Vehicle</th><th>Distance</th><th>Time</th></tr></thead>";
+					var p_tabl_end = "</table>";
+					poiRunnerList.html(p_tabl_start+poiOutput+p_tabl_end);
+
+					// draw poi chart
+					// drawDoughnutChart(response.poiRunnerData, poiRunnerChartData)
+				});
+			});
+
+			// function drawDoughnutChart(poiRunnerDetail, chartData){
+			// 	//Prepare data for Doughnut chart
+			// 	var chartData =[];
+			// 	var chartLabel = [];
+			// 	jQuery.each(poiRunnerDetail, function(i,prd) {
+			// 		chartLabel.push(prd.POIId);
+			// 		chartData.push(prd.totalCount);
+			//
+			// 	});
+			// 	var pieChartData = {
+			// 		labels : chartLabel,
+			// 		datasets : [{
+			// 			backgroundColor  : ["#E81574","#DDE815","#B315E8","#e9967a","#90ee90"],
+			// 			data             : chartData
+			// 		}]
+			// 	};
+			//
+			// 	//update chart
+			// 	trafficChartData.datasets=pieChartData.datasets;
+			// 	trafficChartData.labels=pieChartData.labels;
+			// }
+		})
+	</script>
+</body>
+
+</html>

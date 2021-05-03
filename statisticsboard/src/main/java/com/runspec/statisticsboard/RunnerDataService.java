@@ -53,6 +53,6 @@ public class RunnerDataService {
 
         System.out.println("Sending POIRunner data to UI... Length: "+ POIRunnerDataList.size());
 
-        this.template.convertAndSend("/topic/RunnerData", response);
+        this.template.convertAndSend("/topic/runnerPOIData", response);
     }
 }

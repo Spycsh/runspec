@@ -13,7 +13,7 @@ public class POIRunnerData implements Serializable {
     String POIId;
     private double distance;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone="MST")
-    private Date timeStamp;
+    private Date timestamp;
 
 
     public String getTripId() {
@@ -48,12 +48,12 @@ public class POIRunnerData implements Serializable {
         this.distance = distance;
     }
 
-    public Date getTimeStamp() {
-        return timeStamp;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public void setTimeStamp(Date timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }
 
