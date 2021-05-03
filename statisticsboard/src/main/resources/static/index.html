@@ -29,7 +29,7 @@
 			<table class="table outerTable">
 				<thead>
 				<tr>
-					<th>Trucks At POI</th>
+					<th>Runners at POI</th>
 				</tr>
 				</thead>
 				<tbody>
@@ -88,12 +88,12 @@
 					jQuery.each(response.poiRunnerData, function(i, prd){
 						poiOutput +="<tbody><tr><td>"+ prd.tripId +
 								"</td><td>"+ prd.userId+
-								"</td><td>"+ prd.POIId+
+								"</td><td>"+ prd.poiid+
 								"</td><td>"+ prd.distance+
 								"</td><td>"+ prd.timestamp+
 								"</td></tr></tbody>";
 					});
-					var p_tabl_start = "<table class='table table-bordered table-condensed table-hover innerTable'><thead><tr><th>Vehicle Id</th><th>Vehicle</th><th>Distance</th><th>Time</th></tr></thead>";
+					var p_tabl_start = "<table class='table table-bordered table-condensed table-hover innerTable'><thead><tr><th>Trip Id</th><th>Runner Id</th><th>POI Id</th><th>Distance</th><th>Time</th></tr></thead>";
 					var p_tabl_end = "</table>";
 					poiRunnerList.html(p_tabl_start+poiOutput+p_tabl_end);
 

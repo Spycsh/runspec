@@ -44,13 +44,13 @@ public class RunnerDataProcessor {
         // create Spark Config
         System.out.println("create Spark Config...");
         Properties prop = PropertyFileReader.readPropertyFile();
-        SparkConf conf = new SparkConf()
+        SparkConf sc = new SparkConf()
                 .setAppName(prop.getProperty("com.runspec.processor.spark.app.name"))
-                .setMaster(prop.getProperty("com.runspec.processor.spark.master"))
-                .set("spark.mongodb.input.uri", prop.getProperty("com.runspec.processor.mongo.uri"))
-                .set("spark.mongodb.output.uri", prop.getProperty("com.runspec.processor.mongo.uri"));
+                .setMaster(prop.getProperty("com.runspec.processor.spark.master"));
+//                .set("spark.mongodb.input.uri", prop.getProperty("com.runspec.processor.mongo.uri"))
+//                .set("spark.mongodb.output.uri", prop.getProperty("com.runspec.processor.mongo.uri"));
 
-        JavaSparkContext jsc = new JavaSparkContext(conf); // Create a Java Spark Context
+        JavaSparkContext jsc = new JavaSparkContext(sc); // Create a Java Spark Context
         //batch interval of 5 seconds for incoming stream
         //see https://spark.apache.org/docs/latest/streaming-programming-guide.html#setting-the-right-batch-interval
         JavaStreamingContext jssc = new JavaStreamingContext(jsc, Durations.seconds(5));

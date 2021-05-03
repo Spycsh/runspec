@@ -10,7 +10,7 @@ import java.util.Date;
 public class POIRunnerData implements Serializable {
     String tripId;
     String userId;
-    String POIId;
+    String poiId;
     private double distance;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone="MST")
     private Date timestamp;
@@ -33,11 +33,11 @@ public class POIRunnerData implements Serializable {
     }
 
     public String getPOIId() {
-        return POIId;
+        return poiId;
     }
 
     public void setPOIId(String POIId) {
-        this.POIId = POIId;
+        this.poiId = POIId;
     }
 
     public double getDistance() {
