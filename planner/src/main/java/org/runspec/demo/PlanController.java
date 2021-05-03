@@ -27,11 +27,7 @@ public class PlanController {
 
 
     String open_weather_api_key = "59448db54000f612be094c8dbeab93cb";
-//    String google_api_key = "AIzaSyA5PQGK6R1uJsYtEOburXo9TmCbF08rco0";
-//
-//    String open_weather_api_key = "9612347234msha8bdb3ff55c17adp1d2e36jsnda6caed380a1";
-//
-//    String city = "";
+    boolean recommend = true;
 
     @PostMapping(value= "/plan")
     @ResponseBody
@@ -77,8 +73,7 @@ public class PlanController {
 //        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 //
 //        System.out.println(response.body());
-
-
+//
         String weatherResult = checkWeather(longtitude, latitude);
 
        String airResult = checkAir(longtitude, latitude);
