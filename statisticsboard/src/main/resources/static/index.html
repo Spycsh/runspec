@@ -3,73 +3,238 @@
 <head>
 	<title>Runner Statistics board</title>
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-<!--	<link rel="stylesheet" type="text/css" href="css/style.css">-->
+	<!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
+	<link rel="stylesheet" type="text/css" href="css/leaflet.css" />
+<!--	for marker numbers-->
+	<link rel="stylesheet" type="text/css" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+	<link rel="stylesheet" type="text/css" href="css/leaflet.awesome-markers.css">
+	<style>
+		/** {*/
+		/*	box-sizing: border-box;*/
+		/*}*/
+
+
+		/*thead, tbody { display: block; }*/
+
+		/*tbody {*/
+		/*	display:block;*/
+		/*	border: 1px solid #0078A8;*/
+		/*	height: 445px;       !* Over 445px then scroll *!*/
+		/*	overflow-y: auto;    !* Trigger vertical scroll    *!*/
+		/*	overflow-x: auto;  !* Hide the horizontal scroll *!*/
+		/*}*/
+
+		/*!* fuck this stylesheet setting, I am searching for solutions for one evening *!*/
+		/*!* https://stackoverflow.com/questions/44821023/table-rows-not-fitting-the-tbody-width *!*/
+		/*tr {*/
+		/*	width: 100%;*/
+		/*	display: table;*/
+		/*	box-sizing: border-box;*/
+		/*}*/
+
+
+
+		/*th{*/
+		/*	border: 1px solid #ccc;*/
+		/*}*/
+
+		/*td {*/
+		/*	width: 50px;*/
+		/*	border: 1px solid #ccc;*/
+		/*}*/
+
+		.content {
+			display: table;
+			border: 1px solid #06c;
+			padding: 15px 15px;
+			max-width: 1000px;
+			margin: 10px auto;
+			min-width: 320px;
+			width: 100%;
+		}
+
+
+		#tableDiv {
+			display: table-cell;
+			padding: 10px;
+			border: 1px solid #ccc;
+			margin-right: 10px;
+			vertical-align: top;
+			height: 500px;
+			overflow: auto;
+		}
+
+		#mapDiv {
+			float: left;
+			margin-right: 10px;
+			padding-top: 5px;
+			height: 500px;
+			width: 500px;
+		}
+
+		/* 滚动条宽度 */
+		::-webkit-scrollbar {
+			-webkit-appearance: none;
+			visibility: visible;
+			width: 5px;
+		}
+		::-webkit-scrollbar-thumb {
+			border-radius: 4px;
+			background-color: rgba(0, 0, 0, .5);
+			-webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+		}
+
+		/* 滚动条颜色 */
+		::-webkit-scrollbar-thumb {
+			background-color: #27314d;
+		}
+
+		table {
+			width: 800px;
+			border-spacing: 0px;
+			border-collapse: collapse;
+		}
+
+		table caption{
+			font-weight: bold;
+			font-size: 24px;
+			line-height: 50px;
+		}
+
+		table th, table td {
+			height: 50px;
+			text-align: center;
+			border: 1px solid gray;
+		}
+
+		table thead {
+			color: white;
+			background-color: #7DBCEA;
+		}
+
+		table tbody {
+			display: block;
+			width: calc(100%); /*这里的8px是滚动条的宽度*/
+			height: 300px;
+			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		table tfoot {
+			background-color: #71ea71;
+		}
+
+		table thead tr, table tbody tr, table tfoot tr {
+			box-sizing: border-box;
+			table-layout: fixed;
+			display: table;
+			width: 100%;
+		}
+
+		table tbody tr:nth-of-type(odd) {
+			background: #EEE;
+		}
+
+		table tbody tr:nth-of-type(even) {
+			background: #FFF;
+		}
+
+		table tbody tr td{
+			border-bottom: none;
+		}
+	</style>
 </head>
 
 <body>
-	<div class="container-fluid">
+	<div class="content">
+		<div id="mapDiv">
 
-	</div>
+		</div>
 
-	<div class="row">
 
-		<div class="col-md-4">
-<!--			<table class="table outerTable">-->
+		<!-- <div class="row"> -->
+
+		<div id="tableDiv">
+			<table id="runnerPOIData" cellpadding="0" cellspacing="0">
 <!--				<thead>-->
-<!--				<tr>-->
-<!--					<th>POI Vehicle Chart</th>-->
-<!--				</tr>-->
+<!--					<tr>-->
+<!--						<th>Runners at POI</th>-->
+<!--					</tr>-->
 <!--				</thead>-->
-<!--				<tbody>-->
-<!--				<tr>-->
-<!--					<td><canvas id="poiTrafficChart"></canvas></td>-->
-<!--				</tr>-->
-<!--				</tbody>-->
-<!--			</table>-->
-			<table class="table outerTable">
 				<thead>
-				<tr>
-					<th>Runners at POI</th>
-				</tr>
+
+					<tr>
+						<th>Trip Id</th>
+						<th>Runner Id</th>
+						<th>POI Id</th>
+						<th>Distance(KM)</th>
+						<th>Time</th>
+					</tr>
 				</thead>
-				<tbody>
-				<tr>
-					<td>
-						<div id="runnerPOIData">
-							<table class="table table-bordered table-condensed table-hover innerTable">
-								<tr>
-									<thead>
-									<th>Trip Id</th><th>Runner Id</th><th>POI Id</th><th>Distance</th><th>Time</th>
-									</thead>
-								</tr>
-							</table>
-						</div>
-					</td>
-				</tr>
-				</tbody>
+
+
 			</table>
 		</div>
 	</div>
 
+
+	<!-- <script src="./js/leaflet.js"> </script> -->
+	<script type="text/javascript" src="js/leaflet.js"></script>
+	<script src="js/leaflet.awesome-markers.js"></script>
 	<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
 	<script type="text/javascript" src="js/sockjs-1.1.1.min.js"></script>
 	<script type="text/javascript" src="js/stomp.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>`
-<!--	<script type="text/javascript" src="js/Chart.min.js"></script>-->
+	<!--	<script type="text/javascript" src="js/Chart.min.js"></script>-->
+
+	<script>
+		// https://stackoverflow.com/questions/9394190/leaflet-map-api-with-google-satellite-layer
+		var url = 'http://mt1.google.cn/vt/lyrs=m@207000000&hl=zh-CN&gl=CN&src=app&x={x}&y={y}&z={z}&s=Galile';
+		// initialize map, zoom size 12
+		var leafletMap = L.map('mapDiv').setView([59.38, 18.02], 12);
+		// add layer to map
+		L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+			maxZoom: 20,
+			subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+		}).addTo(leafletMap);
+
+		// add number to marker
+		// https://www.thinbug.com/q/22622393
+		var marker = L.AwesomeMarkers.icon({
+			icon: '',
+			markerColor: 'darkblue',
+			prefix: 'fa',
+			html: "8"
+		});
+		//增加一个marker ，地图上的标记，并绑定了一个popup，默认打开
+		L.marker([59.38, 18.02], {icon:marker}).addTo(leafletMap)
+			.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+		//增加一个圈，设置圆心、半径、样式
+		L.circle([59.38, 18.02], 500, {
+			color: 'red',
+			fillColor: '#f03',
+			fillOpacity: 0.5
+		}).addTo(leafletMap).bindPopup("I am the first Runspec POI.");
+		//增加多边形
+		// L.polygon([
+		//     [41, 123],
+		//     [39, 121],
+		//     [41, 126]
+		// ]).addTo(leafletMap).bindPopup("I am a polygon.");
+		//为点击地图的事件 增加popup
+		var popup = L.popup();
+		function onMapClick(e) {
+			popup
+				.setLatLng(e.latlng)
+				.setContent("You clicked the map at " + e.latlng.toString())
+				.openOn(leafletMap);
+		}
+		leafletMap.on('click', onMapClick);
+	</script>
+
 
 	<script type="text/javascript">
-		// var poiRunnerChartData={
-		// 	labels: ["Runner"],
-		// 	datasets: [{
-		// 		data: [1]
-		// 	}]
-		// };
-
-		jQuery(document).ready(function(){
-			//Charts
-			// var chart1 = document.getElementById("poiRunnerChart").getContext("2d");
-
-
+		jQuery(document).ready(function () {
 			// tables
 			var poiRunnerList = jQuery("#runnerPOIData");
 
@@ -77,52 +242,31 @@
 			var socket = new SockJS('/stomp');
 			var stompClient = Stomp.over(socket);
 
-			stompClient.connect({ }, function(frame){
+			stompClient.connect({}, function (frame) {
 				//subscribe "/topic/runnerPOIData" message
-				stompClient.subscribe("/topic/runnerPOIData", function(data){
+				stompClient.subscribe("/topic/runnerPOIData", function (data) {
 					var dataList = data.body;
 					var response = jQuery.parseJSON(dataList);
 
 					// POI data
 					var poiOutput = '';
-					jQuery.each(response.poiRunnerData, function(i, prd){
-						poiOutput +="<tbody><tr><td>"+ prd.tripId +
-								"</td><td>"+ prd.userId+
-								"</td><td>"+ prd.poiid+
-								"</td><td>"+ prd.distance+
-								"</td><td>"+ prd.timestamp+
-								"</td></tr></tbody>";
+					jQuery.each(response.poiRunnerData, function (i, prd) {
+						poiOutput += "<tr><td>" + prd.tripId +
+							"</td><td>" + prd.userId +
+							"</td><td>" + prd.poiid +
+							"</td><td>" + prd.distance +
+							"</td><td>" + prd.timestamp +
+							"</td></tr>";
 					});
-					var p_tabl_start = "<table class='table table-bordered table-condensed table-hover innerTable'><thead><tr><th>Trip Id</th><th>Runner Id</th><th>POI Id</th><th>Distance</th><th>Time</th></tr></thead>";
-					var p_tabl_end = "</table>";
-					poiRunnerList.html(p_tabl_start+poiOutput+p_tabl_end);
+					var _head = "<thead><tr><th>Trip Id</th><th>Runner Id</th><th>POI Id</th><th>Distance(KM)</th><th>Time</th></tr></thead>"
+					var _body_start = "<tbody>";
+					var _body_end = "</tbody>";
 
-					// draw poi chart
-					// drawDoughnutChart(response.poiRunnerData, poiRunnerChartData)
+					poiRunnerList.html(_head + _body_start + poiOutput + _body_end);
+
 				});
 			});
 
-			// function drawDoughnutChart(poiRunnerDetail, chartData){
-			// 	//Prepare data for Doughnut chart
-			// 	var chartData =[];
-			// 	var chartLabel = [];
-			// 	jQuery.each(poiRunnerDetail, function(i,prd) {
-			// 		chartLabel.push(prd.POIId);
-			// 		chartData.push(prd.totalCount);
-			//
-			// 	});
-			// 	var pieChartData = {
-			// 		labels : chartLabel,
-			// 		datasets : [{
-			// 			backgroundColor  : ["#E81574","#DDE815","#B315E8","#e9967a","#90ee90"],
-			// 			data             : chartData
-			// 		}]
-			// 	};
-			//
-			// 	//update chart
-			// 	trafficChartData.datasets=pieChartData.datasets;
-			// 	trafficChartData.labels=pieChartData.labels;
-			// }
 		})
 	</script>
 </body>
