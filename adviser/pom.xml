@@ -16,7 +16,7 @@
 
 
 <!--    <groupId>org.RunSpec</groupId>-->
-    <artifactId>planner</artifactId>
+    <artifactId>adviser</artifactId>
 <!--    <version>0.0.1-SNAPSHOT</version>-->
 <!--    <name>planner</name>-->
 <!--    <description>planner module in Spring Boot</description>-->

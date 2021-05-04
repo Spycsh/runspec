@@ -1,4 +1,4 @@
-package org.runspec.demo;
+package org.runspec.adviser;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Locale;
 
 @RestController
-public class PlanController {
+public class AdviserController {
 
 
     String open_weather_api_key = "59448db54000f612be094c8dbeab93cb";
     boolean recommend = true;
 
-    @PostMapping(value = "/plan")
+    @PostMapping(value = "/advise")
     @ResponseBody
     public String getWeather(@RequestParam("latitude") String latitude,
                              @RequestParam("longtitude") String longtitude) throws IOException, InterruptedException {

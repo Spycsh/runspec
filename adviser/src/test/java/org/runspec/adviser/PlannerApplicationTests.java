@@ -1,4 +1,4 @@
-package org.runspec.demo;
+package org.runspec.adviser;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
