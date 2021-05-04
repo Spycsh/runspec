@@ -25,6 +25,7 @@
 		/*}*/
 
 		/*!* fuck this stylesheet setting, I am searching for solutions for one evening *!*/
+		/* and it's wrong, wait to be delete
 		/*!* https://stackoverflow.com/questions/44821023/table-rows-not-fitting-the-tbody-width *!*/
 		/*tr {*/
 		/*	width: 100%;*/
@@ -74,6 +75,7 @@
 
 		/* 滚动条宽度 */
 		::-webkit-scrollbar {
+
 			-webkit-appearance: none;
 			visibility: visible;
 			width: 5px;
@@ -115,7 +117,7 @@
 		table tbody {
 			display: block;
 			width: calc(100%); /*这里的8px是滚动条的宽度*/
-			height: 300px;
+			height: 400px;
 			overflow-y: auto;
 			-webkit-overflow-scrolling: touch;
 		}
@@ -172,8 +174,9 @@
 					</tr>
 				</thead>
 
-
 			</table>
+		<br>
+			--------------------------------------------------------------------<b>RunSpec</b>--------------------------------------------------------------------
 		</div>
 	</div>
 
@@ -250,6 +253,8 @@
 			var markerList = [];
 			var circleList = [];
 
+			var tableLength = 0;
+
 			stompClient.connect({}, function (frame) {
 				//subscribe "/topic/runnerPOIData" message
 				stompClient.subscribe("/topic/runnerPOIData", function (data) {
@@ -266,19 +271,27 @@
 
 					// POI data
 					var poiOutput = '';
-					jQuery.each(response.poiRunnerData, function (i, prd) {
-						poiOutput += "<tr><td>" + prd.tripId +
-								"</td><td>" + prd.userId +
-								"</td><td>" + prd.poiid +
-								"</td><td>" + prd.distance.toFixed(3) +
-								"</td><td>" + prd.timestamp +
-								"</td></tr>";
-					});
-					var _head = "<thead><tr><th>Trip Id</th><th>Runner Id</th><th>POI Id</th><th>Distance(KM)</th><th>Time</th></tr></thead>"
-					var _body_start = "<tbody>";
-					var _body_end = "</tbody>";
+					// alert(tableLength);
+					// prevent to scroll to the top if there are no new responses!!
+					if(response.poiRunnerData.length!=tableLength){
+						tableLength = response.poiRunnerData.length;
+						jQuery.each(response.poiRunnerData, function (i, prd) {
+							// latest on the top
+							poiOutput = "<tr><td>" + prd.tripId +
+									"</td><td>" + prd.userId +
+									"</td><td>" + prd.poiid +
+									"</td><td>" + prd.distance.toFixed(3) +
+									"</td><td>" + prd.timestamp +
+									"</td></tr>" + poiOutput;
+						});
+						var _head = "<thead><tr><th>Trip Id</th><th>Runner Id</th><th>POI Id</th><th>Distance(KM)</th><th>Time</th></tr></thead>"
+						var _body_start = "<tbody>";
+						var _body_end = "</tbody>";
 
-					poiRunnerList.html(_head + _body_start + poiOutput + _body_end);
+
+						poiRunnerList.html(_head + _body_start + poiOutput + _body_end);
+					}
+
 
 					// POI count Map
 					jQuery.each(response.poiMapData, function (i, pmd) {
@@ -289,7 +302,7 @@
 						var tmp_marker = L.marker([pmd.latitude, pmd.longitude], {icon: icon}).addTo(leafletMap)
 								// .bindPopup("<b>Hello world!</b><br />I detect a new runner nearby.").openPopup();
 						//增加一个圈，设置圆心、半径、样式
-						var tmp_circle = L.circle([pmd.latitude, pmd.longitude], 500, {
+						var tmp_circle = L.circle([pmd.latitude, pmd.longitude], pmd.radius * 1000, {
 							color: 'red',
 							fillColor: '#f03',
 							fillOpacity: 0.5
@@ -297,15 +310,11 @@
 
 						markerList.push(tmp_marker);
 						circleList.push(tmp_circle);
-
-						// }else if(addedMap[pmd.poiid] != pmd.count){		// if there is already poiid and the received new count is different
-						// 	//
-						// }
-
 					})
 
 				});
 			})
+
 
 		})
 	</script>

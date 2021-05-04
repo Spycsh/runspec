@@ -9,6 +9,7 @@ public class POIMapData implements Serializable {
     private String latitude;
     private String longitude;
     private String name;
+    private Double radius;
     // add the number of runners around
     private int count;
 
@@ -17,6 +18,7 @@ public class POIMapData implements Serializable {
         this.latitude = poi.getLatitude();
         this.longitude = poi.getLongitude();
         this.name = poi.getName();
+        this.radius = poi.getRadius();
     }
 
     public String getPOIId() {
@@ -49,6 +51,14 @@ public class POIMapData implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(Double radius) {
+        this.radius = radius;
     }
 
     public int getCount() {
