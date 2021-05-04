@@ -11,7 +11,8 @@
     <modules>
         <module>producer</module>
         <module>processor</module>
-        <module>dashboard</module>
+        <module>statisticsboard</module>
+        <module>planner</module>
     </modules>
 
 <!--    <properties>-->
