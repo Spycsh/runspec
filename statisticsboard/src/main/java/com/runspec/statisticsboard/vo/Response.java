@@ -8,15 +8,7 @@ import java.util.List;
 
 public class Response implements Serializable {
     private List<POIRunnerData> poiRunnerData;
-    private HashMap<String, Integer> poiCountMap;
-
-    public HashMap<String, Integer> getPoiCountMap() {
-        return poiCountMap;
-    }
-
-    public void setPoiCountMap(HashMap<String, Integer> poiCountMap) {
-        this.poiCountMap = poiCountMap;
-    }
+    private List<POIMapData> poiMapData;
 
     public List<POIRunnerData> getPoiRunnerData() {
         return poiRunnerData;
@@ -26,4 +18,11 @@ public class Response implements Serializable {
         this.poiRunnerData = poiRunnerData;
     }
 
+    public List<POIMapData> getPoiMapData() {
+        return poiMapData;
+    }
+
+    public void setPoiMapData(List<POIMapData> poiMapData) {
+        this.poiMapData = poiMapData;
+    }
 }

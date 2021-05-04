@@ -198,9 +198,11 @@
 			subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
 		}).addTo(leafletMap);
 
+		var markers = [];
+
 		// add number to marker
 		// https://www.thinbug.com/q/22622393
-		var marker = L.AwesomeMarkers.icon({
+		var icon = L.AwesomeMarkers.icon({
 			icon: '',
 			markerColor: 'darkblue',
 			prefix: 'fa',
@@ -208,7 +210,7 @@
 		});
 		// console.log(marker.options.html);
 		//增加一个marker ，地图上的标记，并绑定了一个popup，默认打开
-		L.marker([59.38, 18.02], {icon:marker}).addTo(leafletMap)
+		L.marker([59.38, 18.02], {icon:icon}).addTo(leafletMap)
 			.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 		//增加一个圈，设置圆心、半径、样式
 		L.circle([59.38, 18.02], 500, {
@@ -232,6 +234,11 @@
 		}
 		leafletMap.on('click', onMapClick);
 
+		// track that which markers have already been added on the map
+		// if the cnt keep same, then it indicates that no new markers need to be added
+		// var addedMap = {23a1:1, ..}
+		var addedMap = {};
+
 		jQuery(document).ready(function () {
 			// tables
 			var poiRunnerList = jQuery("#runnerPOIData");
@@ -240,9 +247,20 @@
 			var socket = new SockJS('/stomp');
 			var stompClient = Stomp.over(socket);
 
+			var markerList = [];
+			var circleList = [];
+
 			stompClient.connect({}, function (frame) {
 				//subscribe "/topic/runnerPOIData" message
 				stompClient.subscribe("/topic/runnerPOIData", function (data) {
+					// clear all the markers and circles
+					jQuery.each(markerList, function (i, e) {
+						leafletMap.removeLayer(e);
+					});
+					jQuery.each(circleList, function (i, e) {
+						leafletMap.removeLayer(e);
+					});
+
 					var dataList = data.body;
 					var response = jQuery.parseJSON(dataList);
 
@@ -250,11 +268,11 @@
 					var poiOutput = '';
 					jQuery.each(response.poiRunnerData, function (i, prd) {
 						poiOutput += "<tr><td>" + prd.tripId +
-							"</td><td>" + prd.userId +
-							"</td><td>" + prd.poiid +
-							"</td><td>" + prd.distance.toFixed(3) +
-							"</td><td>" + prd.timestamp +
-							"</td></tr>";
+								"</td><td>" + prd.userId +
+								"</td><td>" + prd.poiid +
+								"</td><td>" + prd.distance.toFixed(3) +
+								"</td><td>" + prd.timestamp +
+								"</td></tr>";
 					});
 					var _head = "<thead><tr><th>Trip Id</th><th>Runner Id</th><th>POI Id</th><th>Distance(KM)</th><th>Time</th></tr></thead>"
 					var _body_start = "<tbody>";
@@ -263,21 +281,31 @@
 					poiRunnerList.html(_head + _body_start + poiOutput + _body_end);
 
 					// POI count Map
-					jQuery.each(response.poiCountMap, function(key, value){
-						marker.options.html = value;
+					jQuery.each(response.poiMapData, function (i, pmd) {
+						// if there are no poiid in the addedMap, just add the markers
+						// if(!jQuery.inArray(pmd.poiid, Object.keys(addedMap))){
+						icon.options.html = pmd.count;
 						//增加一个marker ，地图上的标记，并绑定了一个popup，默认打开
-						L.marker([59.38, 18.02], {icon:marker}).addTo(leafletMap)
-								.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+						var tmp_marker = L.marker([pmd.latitude, pmd.longitude], {icon: icon}).addTo(leafletMap)
+								// .bindPopup("<b>Hello world!</b><br />I detect a new runner nearby.").openPopup();
 						//增加一个圈，设置圆心、半径、样式
-						L.circle([59.38, 18.02], 500, {
+						var tmp_circle = L.circle([pmd.latitude, pmd.longitude], 500, {
 							color: 'red',
 							fillColor: '#f03',
 							fillOpacity: 0.5
-						}).addTo(leafletMap).bindPopup("I am the first Runspec POI.");
+						}).addTo(leafletMap).bindPopup("I am in the region of " + pmd.name);
+
+						markerList.push(tmp_marker);
+						circleList.push(tmp_circle);
+
+						// }else if(addedMap[pmd.poiid] != pmd.count){		// if there is already poiid and the received new count is different
+						// 	//
+						// }
+
 					})
 
 				});
-			});
+			})
 
 		})
 	</script>
