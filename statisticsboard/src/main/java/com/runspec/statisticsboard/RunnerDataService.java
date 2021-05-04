@@ -13,6 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -40,7 +41,6 @@ public class RunnerDataService {
     @Scheduled(fixedRate = 5000)
     public void trigger(){
 
-
         // get the runner data by date
 //        totalRunnerDataRepository.findRunnerDataByDate(sdf.format(new Date())).forEach(e -> totalRunnerDataList.add(e));
 
@@ -50,8 +50,21 @@ public class RunnerDataService {
         // prepare response
         Response response = new Response();
         response.setPoiRunnerData(POIRunnerDataList);
+        
+        // {poiid: count of runners}
+        HashMap<String, Integer> POICountMap = new HashMap<>();
+        for(POIRunnerData e: POIRunnerDataList){
+            if(POICountMap.containsKey(e.getPOIId())){
+                POICountMap.put(e.getPOIId(), POICountMap.get(e.getPOIId()) + 1);
+            }else{
+                POICountMap.put(e.getPOIId(), 0);
+            }
+        }
+        
+        response.setPoiCountMap(POICountMap);
 
         System.out.println("Sending POIRunner data to UI... Length: "+ POIRunnerDataList.size());
+        System.out.println("Sending POICountMap data to UI...Length: "+POICountMap);
 
         this.template.convertAndSend("/topic/runnerPOIData", response);
     }

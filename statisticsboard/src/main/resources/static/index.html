@@ -206,6 +206,7 @@
 			prefix: 'fa',
 			html: "8"
 		});
+		// console.log(marker.options.html);
 		//增加一个marker ，地图上的标记，并绑定了一个popup，默认打开
 		L.marker([59.38, 18.02], {icon:marker}).addTo(leafletMap)
 			.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
@@ -230,15 +231,12 @@
 				.openOn(leafletMap);
 		}
 		leafletMap.on('click', onMapClick);
-	</script>
 
-
-	<script type="text/javascript">
 		jQuery(document).ready(function () {
 			// tables
 			var poiRunnerList = jQuery("#runnerPOIData");
 
-			// use sockjs
+			// use sockjs, create stomp over it
 			var socket = new SockJS('/stomp');
 			var stompClient = Stomp.over(socket);
 
@@ -263,6 +261,20 @@
 					var _body_end = "</tbody>";
 
 					poiRunnerList.html(_head + _body_start + poiOutput + _body_end);
+
+					// POI count Map
+					jQuery.each(response.poiCountMap, function(key, value){
+						marker.options.html = value;
+						//增加一个marker ，地图上的标记，并绑定了一个popup，默认打开
+						L.marker([59.38, 18.02], {icon:marker}).addTo(leafletMap)
+								.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+						//增加一个圈，设置圆心、半径、样式
+						L.circle([59.38, 18.02], 500, {
+							color: 'red',
+							fillColor: '#f03',
+							fillOpacity: 0.5
+						}).addTo(leafletMap).bindPopup("I am the first Runspec POI.");
+					})
 
 				});
 			});
