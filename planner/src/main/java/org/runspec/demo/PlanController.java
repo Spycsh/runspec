@@ -29,56 +29,19 @@ public class PlanController {
     String open_weather_api_key = "59448db54000f612be094c8dbeab93cb";
     boolean recommend = true;
 
-    @PostMapping(value= "/plan")
+    @PostMapping(value = "/plan")
     @ResponseBody
     public String getWeather(@RequestParam("latitude") String latitude,
                              @RequestParam("longtitude") String longtitude) throws IOException, InterruptedException {
 
 //        String geocoder_query = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longtitude +"&key=" + google_api_key;
-//        HttpRequest request_city = HttpRequest.newBuilder()
-//
-//                .uri(URI.create(geocoder_query))
-//                .method("GET", HttpRequest.BodyPublishers.noBody())
-//                .build();
-//        HttpResponse<String> response_city = HttpClient.newHttpClient().send(request_city, HttpResponse.BodyHandlers.ofString());
-//
-//        System.out.println(response_city.body());
-//
-//
-//
-//        JSONObject jsonObject = JSON.parseObject(response_city.body());
-//        JSONArray results = jsonObject.getJSONArray("results").getJSONObject(0).getJSONArray("address_components");
-//        for(int i = 0; i < results.size(); i++){
-//            JSONObject temp = results.getJSONObject(i);
-//            JSONArray type = temp.getJSONArray("types");
-//            if(type.size() == 2 && (type.get(0).equals("administrative_area_level_1") || type.get(1).equals("administrative_area_level_1") )){
-//                city = temp.getString("long_name");
-//            }
-//
-//        }
-//        System.out.println("***********************");
-//        System.out.println("city from google geocoder api: " + city);
-//        System.out.println("***********************");
-//
-//
-//
+
 //        String  open_weather_query = "https://community-open-weather-map.p.rapidapi.com/find?q=" + city.trim() + "&cnt=1&mode=JSON&lon=" + longtitude + "&type=link%2C%20accurate&lat="+ latitude + "&units=imperial%2C%20metric";
-//
-//        HttpRequest request = HttpRequest.newBuilder()
-//                .uri(URI.create(open_weather_query))
-//                .header("x-rapidapi-key", open_weather_api_key)
-//                .header("x-rapidapi-host", "community-open-weather-map.p.rapidapi.com")
-//                .method("GET", HttpRequest.BodyPublishers.noBody())
-//                .build();
-//        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-//
-//        System.out.println(response.body());
-//
+
+
         String weatherResult = checkWeather(longtitude, latitude);
 
-       String airResult = checkAir(longtitude, latitude);
-
-
+        String airResult = checkAir(longtitude, latitude);
 
 
         return "success";
@@ -111,15 +74,14 @@ public class PlanController {
         String weather_id_2_hour = result.getJSONArray("hourly").getJSONObject(0).getJSONArray("weather").getJSONObject(0).getString("id");
 
 
-
         return "";
     }
 
 
-    public boolean checkWeatherId(String id){
+    public boolean checkWeatherId(String id) {
         char begin = id.charAt(0);
         //https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
-        if(begin == '2' || begin == '3' || begin == '5' || begin == '6' || begin == '7'){
+        if (begin == '2' || begin == '3' || begin == '5' || begin == '6' || begin == '7') {
             return false;
         }
         return true;
