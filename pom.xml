@@ -12,7 +12,7 @@
         <module>producer</module>
         <module>processor</module>
         <module>statisticsboard</module>
-        <module>planner</module>
+        <module>adviser</module>
     </modules>
 
 <!--    <properties>-->
