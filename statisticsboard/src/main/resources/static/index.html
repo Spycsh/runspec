@@ -90,7 +90,7 @@
 		}
 
 		table {
-			width: 800px;
+			width: 700px;
 			border-spacing: 0px;
 			border-collapse: collapse;
 		}
@@ -254,7 +254,7 @@
 						poiOutput += "<tr><td>" + prd.tripId +
 							"</td><td>" + prd.userId +
 							"</td><td>" + prd.poiid +
-							"</td><td>" + prd.distance +
+							"</td><td>" + prd.distance.toFixed(3) +
 							"</td><td>" + prd.timestamp +
 							"</td></tr>";
 					});

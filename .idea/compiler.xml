@@ -8,8 +8,16 @@
         <outputRelativeToContentRoot value="true" />
         <module name="producer" />
         <module name="processor" />
+        <module name="planner" />
         <module name="dashboard" />
+        <module name="statisticsboard" />
       </profile>
     </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="planner" options="-parameters" />
+      <module name="statisticsboard" options="-parameters" />
+    </option>
   </component>
 </project>
