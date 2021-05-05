@@ -11,6 +11,8 @@ public class POI implements Serializable {
     private String latitude;
     private String longitude;
 
+    private double radius;
+
     public String getPOIId() {
         return POIId;
     }
@@ -43,5 +45,11 @@ public class POI implements Serializable {
         this.longitude = longitude;
     }
 
+    public double getRadius() {
+        return radius;
+    }
 
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
 }

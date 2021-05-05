@@ -4,9 +4,13 @@ import java.io.Serializable;
 
 public class POIData implements Serializable {
     private String POIId;
+    private String name;
     private double latitude;
     private double longitude;
+
     private double radius;
+
+
 
     public String getPOIId() {
         return POIId;
@@ -14,6 +18,14 @@ public class POIData implements Serializable {
 
     public void setPOIId(String POIId) {
         this.POIId = POIId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getLatitude() {

@@ -2,6 +2,7 @@ package com.runspec.processor;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
@@ -38,6 +39,7 @@ public class RunnerDataProcessor {
     // get the table
     MongoCollection<Document> runnerData_collection;
     MongoCollection<Document> runnerPOIData_collection;
+    MongoCollection<Document> POIData_collection;
 
 
     public static void main(String[] args) throws Exception {
@@ -92,7 +94,8 @@ public class RunnerDataProcessor {
             rdp.mongoDatabase = rdp.mongoClient.getDatabase("runspec-0502");
             rdp.runnerData_collection = rdp.mongoDatabase.getCollection("runnerData");
             rdp.runnerPOIData_collection = rdp.mongoDatabase.getCollection("runnerPOIData");
-            System.out.println("Connect to database successfully");
+            rdp.POIData_collection = rdp.mongoDatabase.getCollection("POI");
+            System.out.println("Connect to databases successfully");
         }catch (Exception e){
             System.err.println(e.getClass().getName()+": "+e.getMessage());
         }
@@ -103,19 +106,34 @@ public class RunnerDataProcessor {
 
         // home 59.382831, 18.026270
         // process poi data
+        // Finished yet
         // TODO here requires a new dataloader class to initialize the default POIData and here
         //  only read the data from mongo. So here should be a list of POI to broadcast!!
-        POIData poiData = new POIData();
-        poiData.setPOIId(UUID.randomUUID().toString());
-        poiData.setLatitude(59.382831);
-        poiData.setLongitude(18.026270);
-        poiData.setRadius(0.5); // 500 meters
+        List<POIData> poiDataList = new ArrayList<>();
+        FindIterable<Document> result = rdp.POIData_collection.find();
+        for(Document doc: result){
+            POIData poiData = new POIData();
+            poiData.setPOIId(doc.get("POIId").toString());
+            poiData.setLatitude((Double) doc.get("latitude"));
+            poiData.setLongitude((Double) doc.get("longitude"));
+            poiData.setRadius((Double) doc.get("radius")); // 500 meters
+
+            poiDataList.add(poiData);
+        }
+
+
+
         //  Broadcast variables allow the programmer to keep a read-only variable cached on each machine
         //  rather than shipping a copy of it with tasks
-        Broadcast<POIData> broadcastPOIValues = jssc.sparkContext().
-                broadcast(poiData);
+        // TODO Now just iterate, use GeoHash to improve
+        for(POIData e: poiDataList){
+            Broadcast<POIData> broadcastPOIValue = jssc.sparkContext().broadcast(e);
+            rdp.processPOIData(msgDataStream, broadcastPOIValue);
+        }
+//        Broadcast<List<POIData>> broadcastPOIValues = jssc.sparkContext().
+//                broadcast(poiDataList);
 
-        rdp.processPOIData(msgDataStream, broadcastPOIValues);
+//        rdp.processPOIData(msgDataStream, broadcastPOIValues);
 
         //start context
         jssc.start();
