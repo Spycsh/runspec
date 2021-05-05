@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.code.geocoder.Geocoder;
 
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.apache.tomcat.jni.Address;
 
 
@@ -22,8 +23,8 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Locale;
 
-@RestController
-public class AdviserController {
+@GrpcService
+public class AdviserService {
 
 
     String open_weather_api_key = "59448db54000f612be094c8dbeab93cb";
@@ -62,9 +63,12 @@ public class AdviserController {
         JSONObject result = JSON.parseObject(weather_response.body());
         JSONObject current = result.getJSONObject("current");
         String humidity = current.getString("humidity");
-        String temp = current.getString("temp");
+        String temp_kel = current.getString("temp");
+        double temp = Integer.parseInt(temp_kel) - 273.15;
         String visibility = current.getString("visibility");
         String windSpeed = current.getString("wind_speed");
+        //https://www.epa.gov/sunsafety/uv-index-scale-0
+        //0-2, 3-7, 8+
         String uvi = current.getString("uvi");
 
         String main = current.getJSONArray("weather").getJSONObject(0).getString("main");
@@ -100,7 +104,11 @@ public class AdviserController {
 
         JSONObject result = JSON.parseObject(air_response.body());
         JSONObject current_air = result.getJSONArray("list").getJSONObject(0);
+
+        //1 = Good, 2 = Fair, 3 = Moderate, 4 = Poor, 5 = Very Poor
         String aqi = current_air.getJSONObject("main").getString("aqi");
+
+        //WHO standard - 2005
         String co = current_air.getJSONObject("components").getString("co");
         String no = current_air.getJSONObject("components").getString("no");
         String no2 = current_air.getJSONObject("components").getString("no2");
@@ -109,9 +117,6 @@ public class AdviserController {
         String pm2_5 = current_air.getJSONObject("components").getString("pm2_5");
         String pm10 = current_air.getJSONObject("components").getString("pm10");
         String nh3 = current_air.getJSONObject("components").getString("nh3");
-
-        System.out.println("aqi" + aqi);
-        System.out.println("pm2_5" + pm2_5);
 
         return "";
     }
