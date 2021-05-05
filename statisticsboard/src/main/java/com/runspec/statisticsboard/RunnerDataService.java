@@ -77,6 +77,7 @@ public class RunnerDataService {
             POIMapData newObj = new POIMapData(e);
             // Here should has the key
             newObj.setCount(countMap.getOrDefault(e.getPOIId(), 0));
+//            System.out.println("cnt:"+newObj.getCount());
             POIMapList.add(newObj);
         }
         response.setPoiMapData(POIMapList);
