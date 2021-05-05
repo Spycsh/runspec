@@ -8,15 +8,23 @@ Zidi Chen zidi@kth.se
 ## Workflow
 
 android (open app)
--> adviser (weather and air information)
--> android (display weather and air information)
--> android (start running) 
--> producer (kafka collects data) 
--> processor (process data: how hot the predefined spots are) [display in statisticsboard] 
--> android (display steps, length and heat of predefined spots)
+
+⇨ adviser (weather and air information)
+
+⇨ android (display weather and air information)
+
+⇨ android (start running) 
+
+⇨ producer (kafka collects data) 
+
+⇨ processor (process data: how hot the predefined spots are) [display in statisticsboard] 
+
+⇨ android (display steps, length and heat of predefined spots)
 
 ## Planed API:
+
 `adviser`: one api for weather and air info
+
 `producer`: pass data to kafka
 
 
