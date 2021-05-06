@@ -132,7 +132,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     @SuppressLint("SetTextI18n")
     fun onLocationChanged(location: Location) {
-        if (mLocation == null) {
+        Log.d("location","New ${location.latitude}+${location.longitude}")
+        if (mLocation != null) {
             val result = FloatArray(1)
             mLocation?.let {
                 Location.distanceBetween(
@@ -143,9 +144,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     result
                 )
             }
-            distance += result[0]
+            if (result[0] >= 1) {
+                distance += result[0]
+                mLocation = location
+            }
+            Log.d("location","Distance-$distance")
+            Log.d("location","Result-${result[0]}")
+        } else {
+            mLocation = location
         }
-        mLocation = location
 
         distanceData.text = "$distance m"
         latitudeData.text = location.latitude.toString()
