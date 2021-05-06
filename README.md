@@ -55,8 +55,8 @@ another terminal:
 C:\kafka\bin\windows>kafka-server-start.bat ..\..\config\server.properties
 
 2. run mongodb
-    
-mongod --dbpath=C:\MongoDB\data\db 
+
+C:\MongoDB\bin>mongod --dbpath=C:\MongoDB\data\db 
 
 3. run
 
