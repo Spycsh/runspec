@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private lateinit var stepSensor: Sensor
 
+    private var initSteps = 0f
     private var stepsTaken = 0
     private var reportedSteps = 0
 
@@ -133,44 +134,40 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                // Permission is granted. Continue the action or workflow in your
-                // app.
+
             } else {
-                // Explain to the user that the feature is unavailable because the
-                // features requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
+
             }
         }
 
     private fun checkPermission(): Boolean {
-        return if (this.let {
-                ActivityCompat.checkSelfPermission(
-                    it,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            } != PackageManager.PERMISSION_GRANTED && this.let {
-                ActivityCompat.checkSelfPermission(
-                    it,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            } != PackageManager.PERMISSION_GRANTED
-        ) {
-            true
-        } else {
-            requestPermissionLauncher.launch(
-                Manifest.permission.ACCESS_FINE_LOCATION)
-            requestPermissionLauncher.launch(
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-            false
+        when {
+            ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACTIVITY_RECOGNITION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                return true
+            }
+            else -> {
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACTIVITY_RECOGNITION).forEach {
+                    requestPermissionLauncher.launch(it)
+                }
+                return false
+            }
         }
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
 
         if (event != null) {
-            stepData.text = event.values[0].toString()
+            if (initSteps == 0f)
+                initSteps = event.values[0]
+            stepData.text = (event.values[0]-initSteps).toString()
         }
 
 //        val sensor = event?.sensor
