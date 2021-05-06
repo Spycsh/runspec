@@ -21,11 +21,57 @@ android (open app)
 
 ⇨ android (display steps, length and heat of predefined spots)
 
-## Planed API:
+## API:
 
-`adviser`: one api for weather and air info
+- `adviser`: 
 
-`producer`: pass data to kafka
+http://localhost:8082/adviser/info
+
+POST
+
+two parameters: longitude and latitude
+
+- `producer`:
+
+http://localhost:8182/producer/runningData
+ 
+POST
+
+give a JSON string including: "longitude", "latitude", "tripId", "userId"
+
+
+## To run
+Check producer, processor and statisticsboard modules have java version 1.8 (especially producer module).
+Check adviser module has java version 15 or above. (to use java.net.http package).
+
+Remember to replace the paths to your own paths.
+
+1. run Kafka
+
+one terminal: 
+C:\kafka\bin\windows>zookeeper-server-start.bat ..\..\config\zookeeper.properties
+
+another terminal:
+C:\kafka\bin\windows>kafka-server-start.bat ..\..\config\server.properties
+
+2. run mongodb
+    
+mongod --dbpath=C:\MongoDB\data\db 
+
+3. run
+
+adviser: AdviserLauncher.java
+
+statisticsboard: statisticsboardApplication.java (before processor and producer)
+
+processor: RunnerDataProcessor.java
+
+producer: RunnerDataProducer.java
+
+## To do
+
+[] try to make all modules in java version 15 (modify pom.xml)
+[] user account management?
 
 
 

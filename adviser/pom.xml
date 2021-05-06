@@ -58,23 +58,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.code.geocoder-java/geocoder-java -->
-        <dependency>
-            <groupId>com.google.code.geocoder-java</groupId>
-            <artifactId>geocoder-java</artifactId>
-            <version>0.15</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.4</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.code.geocoder-java/geocoder-java -->
-        <dependency>
-            <groupId>com.google.code.geocoder-java</groupId>
-            <artifactId>geocoder-java</artifactId>
-            <version>0.16</version>
-        </dependency>
+
 
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -82,11 +66,21 @@
             <version>1.2.73</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
         <dependency>
-            <groupId>net.devh</groupId>
-            <artifactId>grpc-server-spring-boot-starter</artifactId>
-            <version>2.12.0.RELEASE</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.4.10</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.6</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
