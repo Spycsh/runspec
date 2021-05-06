@@ -1,6 +1,7 @@
 package com.example.iotinfo
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Sensor
@@ -24,10 +25,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var mLocationRequest: LocationRequest
     private var requestingLocationUpdates = true
     private lateinit var locationCallback: LocationCallback
+    private var mLocation: Location? = null
 
     private lateinit var latitudeData: TextView
     private lateinit var longitudeData: TextView
     private lateinit var stepData: TextView
+    private lateinit var distanceData: TextView
 
     private lateinit var sensorManager: SensorManager
     private lateinit var stepSensor: Sensor
@@ -35,6 +38,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var initSteps = 0f
     private var stepsTaken = 0
     private var reportedSteps = 0
+
+    private var distance = 0f
 
 //    private val REQUEST_FINE_LOCATION = 0
 
@@ -46,6 +51,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         latitudeData = this.findViewById(R.id.latitudeData)
         longitudeData = this.findViewById(R.id.longitudeData)
         stepData = this.findViewById(R.id.stepData)
+        distanceData = this.findViewById(R.id.distanceData)
 
         // create Location Request
         createLocationRequest()
@@ -108,8 +114,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun createLocationRequest(){
         mLocationRequest =  LocationRequest.create().apply {
-            interval = 1000
-            fastestInterval = 500
+            interval = 10000
+            fastestInterval = 1000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
     }
@@ -124,7 +130,24 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     fun onLocationChanged(location: Location) {
+        if (mLocation == null) {
+            val result = FloatArray(1)
+            mLocation?.let {
+                Location.distanceBetween(
+                    it.latitude,
+                    it.longitude,
+                    location.latitude,
+                    location.longitude,
+                    result
+                )
+            }
+            distance += result[0]
+        }
+        mLocation = location
+
+        distanceData.text = "$distance m"
         latitudeData.text = location.latitude.toString()
         longitudeData.text = location.longitude.toString()
     }

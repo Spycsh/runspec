@@ -6,4 +6,6 @@
     <string name="longitude">Longitude:</string>
     <string name="step">Step:</string>
     <string name="stepdata"><![CDATA[<StepData>]]></string>
+    <string name="distance">Distance:</string>
+    <string name="distancedata"><![CDATA[<DistanceData>]]></string>
 </resources>
