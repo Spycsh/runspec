@@ -7,7 +7,10 @@ import java.util.List;
 public class Weather {
     private String currentWeather;
     private boolean badCurrentWeather;
-    private List<String> weatherWithInTwoHours;
+    private String nextHour0Weather;
+    private String nextHour1Weather;
+    private String nextHour2Weather;
+    private boolean badFutureWeather;
     private String temperature;
     private String visibility;
     private String humidity;
@@ -15,7 +18,7 @@ public class Weather {
     private String uvi;
 
     public Weather(){
-        weatherWithInTwoHours = new ArrayList<String>();
+
     }
 
 
@@ -30,6 +33,38 @@ public class Weather {
         } else if(num >= 8.0){
             uvi = uvi + ", high";
         }
+    }
+
+    public boolean isBadFutureWeather() {
+        return badFutureWeather;
+    }
+
+    public void setBadFutureWeather(boolean badFutureWeather) {
+        this.badFutureWeather = badFutureWeather;
+    }
+
+    public String getNextHour0Weather() {
+        return nextHour0Weather;
+    }
+
+    public void setNextHour0Weather(String nextHour0Weather) {
+        this.nextHour0Weather = nextHour0Weather;
+    }
+
+    public String getNextHour1Weather() {
+        return nextHour1Weather;
+    }
+
+    public void setNextHour1Weather(String nextHour1Weather) {
+        this.nextHour1Weather = nextHour1Weather;
+    }
+
+    public String getNextHour2Weather() {
+        return nextHour2Weather;
+    }
+
+    public void setNextHour2Weather(String nextHour2Weather) {
+        this.nextHour2Weather = nextHour2Weather;
     }
 
     public boolean isBadCurrentWeather() {
@@ -56,9 +91,6 @@ public class Weather {
         this.currentWeather = currentWeather;
     }
 
-    public void addFutureWeather(String futureWeather) {
-        this.weatherWithInTwoHours.add(futureWeather) ;
-    }
 
     public String getTemperature() {
         return temperature;

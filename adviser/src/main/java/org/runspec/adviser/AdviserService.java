@@ -83,16 +83,21 @@ public class AdviserService {
         weather.setCurrentWeather(main);
 
         String weather_id_current = current.getJSONArray("weather").getJSONObject(0).getString("id");
-        weather.setBadCurrentWeather(checkWeatherId(weather_id_current));
+        weather.setBadCurrentWeather(!checkWeatherId(weather_id_current));
 
         String weather_0_hour = result.getJSONArray("hourly").getJSONObject(0).getJSONArray("weather").getJSONObject(0).getString("main");
         String weather_1_hour = result.getJSONArray("hourly").getJSONObject(0).getJSONArray("weather").getJSONObject(0).getString("main");
         String weather_2_hour = result.getJSONArray("hourly").getJSONObject(0).getJSONArray("weather").getJSONObject(0).getString("main");
 
-        weather.addFutureWeather(weather_0_hour);
-        weather.addFutureWeather(weather_1_hour);
-        weather.addFutureWeather(weather_2_hour);
+        String weather_0_hour_id = result.getJSONArray("hourly").getJSONObject(0).getJSONArray("weather").getJSONObject(0).getString("id");
+        String weather_1_hour_id = result.getJSONArray("hourly").getJSONObject(0).getJSONArray("weather").getJSONObject(0).getString("id");
+        String weather_2_hour_id = result.getJSONArray("hourly").getJSONObject(0).getJSONArray("weather").getJSONObject(0).getString("id");
 
+
+        weather.setNextHour0Weather(weather_0_hour);
+        weather.setNextHour1Weather(weather_1_hour);
+        weather.setNextHour2Weather(weather_2_hour);
+        weather.setBadFutureWeather((!checkWeatherId(weather_0_hour_id))||(!checkWeatherId(weather_1_hour_id))||(!checkWeatherId(weather_2_hour_id)));
 
         return weather;
     }
