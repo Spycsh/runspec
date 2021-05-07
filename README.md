@@ -49,24 +49,42 @@ Remember to replace the paths to your own paths.
 1. run Kafka
 
 one terminal: 
-C:\kafka\bin\windows>zookeeper-server-start.bat ..\..\config\zookeeper.properties
+`C:\kafka\bin\windows>zookeeper-server-start.bat ..\..\config\zookeeper.properties`
 
 another terminal:
-C:\kafka\bin\windows>kafka-server-start.bat ..\..\config\server.properties
+`C:\kafka\bin\windows>kafka-server-start.bat ..\..\config\server.properties`
 
 2. run mongodb
 
-C:\MongoDB\bin>mongod --dbpath=C:\MongoDB\data\db 
+`C:\MongoDB\bin>mongod --dbpath=C:\MongoDB\data\db `
 
 3. run
 
-adviser: AdviserLauncher.java
+**Please install `mvn` tool firstly.**
 
-statisticsboard: statisticsboardApplication.java (before processor and producer)
+* adviser:
+```shell
+cd ./adviser
+mvn spring-boot:run
+```
 
-processor: RunnerDataProcessor.java
+* statisticsboard: 
+```shell
+cd ./statisticsboard
+mvn spring-boot:run
+```
 
-producer: RunnerDataProducer.java
+* processor: 
+```shell
+cd ./processor
+mvn exec:java
+```
+
+* producer: 
+```shell
+cd ./processor
+mvn exec:java
+```
 
 ## To do
 
