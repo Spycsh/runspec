@@ -82,7 +82,7 @@ mvn exec:java
 
 * producer: 
 ```shell
-cd ./processor
+cd ./producer
 mvn exec:java
 ```
 
