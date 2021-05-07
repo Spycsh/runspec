@@ -2,13 +2,17 @@ package com.runspec.producer;
 
 //import org.apache.kafka.clients.producer.KafkaProducer;
 
+import com.runspec.producer.util.RunnerDataSerializer;
 import com.runspec.producer.vo.RunnerData;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
 //import org.apache.kafka.clients.producer.Producer;
-import kafka.javaapi.producer.Producer;
+//import kafka.javaapi.producer.Producer;
 import com.runspec.producer.util.PropertyFileReader;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.bson.types.ObjectId;
 import org.restlet.Component;
 import org.restlet.data.Protocol;
@@ -30,15 +34,23 @@ public class RunnerDataProducer {
         System.out.println("Using Zookeeper=" + zookeeper + " ,Broker-list=" + brokerList + " and topic " + topic);
 
         // set producer properties
-        Properties properties = new Properties();
-        properties.put("zookeeper.connect", zookeeper);
-        properties.put("metadata.broker.list", brokerList);
-        properties.put("request.required.acks", "1");
-        properties.put("serializer.class", "com.runspec.producer.util.RunnerDataEncoder");
+        Properties props = new Properties();
+        props.put("zookeeper.connect", zookeeper);
+//        props.put("metadata.broker.list", brokerList);
+//        properties.put("request.required.acks", "1");
+//        props.put("serializer.class", "com.runspec.producer.util.RunnerDataEncoder");
+        props.put("bootstrap.servers", "localhost:9092");
+//        props.put("acks", "all");
+//        props.put("retries", 0);
+//        props.put("batch.size", 16384);
+//        props.put("linger.ms", 1);
+//        props.put("buffer.memory", 33554432);
+        props.put("key.serializer", StringSerializer.class);
+        props.put("value.serializer", RunnerDataSerializer.class);
 
-        producer = new Producer<String, RunnerData>(new ProducerConfig(properties));
+        producer = new KafkaProducer<>(props);
 
-        return properties;
+        return props;
     }
 
     public static void main(String args[]) throws Exception {
@@ -86,8 +98,10 @@ public class RunnerDataProducer {
 //                Thread.sleep(rand.nextInt(3000 - 1000) + 1000);
 //
 //            }
-                KeyedMessage<String, RunnerData> data = new KeyedMessage<String, RunnerData>(topic, runnerData);
-                producer.send(data);
+//                KeyedMessage<String, RunnerData> data = new KeyedMessage<String, RunnerData>(topic, runnerData);
+//                producer.send(data);
+                System.out.println("ready to send..."+runnerData.getLatitude()+":"+runnerData.getLongitude());
+                producer.send(new ProducerRecord<String, RunnerData>(topic, runnerData));
 //              System.out.println("send: ok");
     }
 
