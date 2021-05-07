@@ -9,7 +9,8 @@ public class ProducerRestApplication extends Application {
     @Override
     public Restlet createInboundRoot(){
         Router router = new Router(getContext());
-        router.attach("/runningData", ProducerRestService.class );
+        router.attach("/runningData", ProducerCollectRunningDataRestService.class );
+        router.attach("/returnTripData", ProducerReturnTripDataRestService.class);
         return router;
     }
 }
