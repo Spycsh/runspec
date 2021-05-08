@@ -1,5 +1,6 @@
 # RunSpec
-*specialize your running plan*
+
+*specialize your running*
 
 Sihan Chen sihanc@kth.se  
 Yuehao Sui yuehao@kth.se  
@@ -11,7 +12,7 @@ Zidi Chen zidi@kth.se
 
 android (open app)
 
-⇨ adviser (weather and air information)
+⇨ adviser (weather and air information, hot spots)
 
 ⇨ android (display weather and air information)
 
@@ -21,26 +22,43 @@ android (open app)
 
 ⇨ processor (process data: how hot the predefined spots are) [display in statisticsboard] 
 
-⇨ android (display steps, length and heat of predefined spots)
+⇨ android (display steps, length and checklist of predefined spots)
 
 ## API:
 
-- `adviser`: 
+> One tripId for one run.
 
-http://localhost:8082/adviser/info
+- `http://localhost:8082/adviser/info`
 
 POST
 
-two parameters: longitude and latitude
+two parameters(not JSON): longitude, latitude
 
-- `producer`:
+in `adviser` module
 
-http://localhost:8182/producer/runningData
+return a JSON string with weather and air information
+
+- `http://localhost:8182/producer/runningData`
  
 POST
 
-give a JSON string including: "longitude", "latitude", "tripId", "userId"
+JSON string: "longitude", "latitude", "tripId", "userId"
 
+- `http://localhost:8182/producer/returnTripData`
+
+POST
+
+JSON string: "userId", "tripId"
+
+return POIs (with latitude, name, pOIId, radius, longitude) which current user passes by in the current trip in ***JSON***
+
+- `http://localhost:8182/producer/hotSpot`
+
+POST
+
+no param: we still use post here because we might need to post latitude and longitude to check the city for searching hottest spots ***in the future***.
+
+return 5 top hottest POIs in ***JSON*** (with latitude, name, pOIId, radius, longitude, count)
 
 ## To run
 This project is based on Java 11.
@@ -48,14 +66,20 @@ This project is based on Java 11.
 1. run Kafka
 
 one terminal: 
-`C:\kafka\bin\windows>zookeeper-server-start.bat ..\..\config\zookeeper.properties`
+```
+C:\kafka\bin\windows>zookeeper-server-start.bat ..\..\config\zookeeper.properties
+```
 
 another terminal:
-`C:\kafka\bin\windows>kafka-server-start.bat ..\..\config\server.properties`
+```
+C:\kafka\bin\windows>kafka-server-start.bat ..\..\config\server.properties
+```
 
 2. run mongodb
 
-`C:\MongoDB\bin>mongod --dbpath=C:\MongoDB\data\db `
+```
+C:\MongoDB\bin>mongod --dbpath=C:\MongoDB\data\db 
+```
 
 3. run
 
@@ -88,6 +112,8 @@ mvn exec:java
 ## To do
 
 - [x] change packages dependencies to adapt to Java 11
+- [x] add api for top five spots
+- [x] add api to return the pois which the users passed by
 - [ ] user account management
 - [ ] android get data from backend
 - [ ] android UI

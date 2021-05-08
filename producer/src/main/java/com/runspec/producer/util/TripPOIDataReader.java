@@ -13,6 +13,7 @@ import org.bson.Document;
 import java.util.ArrayList;
 import java.util.List;
 
+//read trip data from mongo db
 public class TripPOIDataReader {
 
     MongoClient mongoClient;
@@ -22,10 +23,38 @@ public class TripPOIDataReader {
     MongoCollection<Document> POIData_collection;
     MongoCollection<Document> POICountData_collection;
 
-    public TripPOIDataReader() {
+    //return a list of POI which the user passed by in the run trip
+    public List<POI> getTripPOIData(String userId, String tripId) {
 
+        //get the record of current user and current trip
+        BasicDBObject filter = new BasicDBObject();
+        filter.put("userId", userId);
+        filter.put("tripId", tripId);
+        List<POI> passedPoiList = new ArrayList<POI>();
+        FindIterable<Document> runnerResult = runnerPOIData_collection.find(filter);
+        for(Document doc: runnerResult){
+            POI poi = new POI();
+            poi.setPOIId(doc.get("poiId").toString());
+            passedPoiList.add(poi);
+        }
+
+        //get poi information of the required poi
+        FindIterable<Document> poiResult = POIData_collection.find();
+        for(Document doc: poiResult){
+            String id = doc.get("POIId").toString();
+            for( POI poi: passedPoiList){
+                if(id.equals(poi.getPOIId())){
+                    poi.setName(doc.get("name").toString());
+                    poi.setLatitude(doc.get("latitude").toString());
+                    poi.setLongitude(doc.get("longitude").toString());
+                    poi.setRadius(Double.parseDouble(doc.get("radius").toString()));
+                }
+            }
+        }
+        return passedPoiList;
     }
 
+    //connect to database
     public void connectDatabase() {
         try {
             mongoClient = new MongoClient("localhost", 27017);
@@ -33,17 +62,16 @@ public class TripPOIDataReader {
             runnerData_collection = mongoDatabase.getCollection("runnerData");
             runnerPOIData_collection = mongoDatabase.getCollection("runnerPOIData");
             POICountData_collection = mongoDatabase.getCollection("POICount");
-
+            POIData_collection = mongoDatabase.getCollection("POI");
             System.out.println("Connect to databases successfully");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
-    public void getTripPOIData(){
 
-    }
 
+    //get five top hottest POI
     public List<POICount> getHotPoiData(){
         List<POICount> hotPoiList = new ArrayList<>();
         FindIterable<Document> result = POICountData_collection.find().limit(5).sort(new BasicDBObject("count",-1));;
