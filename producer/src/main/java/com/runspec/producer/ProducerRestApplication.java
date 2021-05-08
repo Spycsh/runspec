@@ -11,6 +11,7 @@ public class ProducerRestApplication extends Application {
         Router router = new Router(getContext());
         router.attach("/runningData", ProducerCollectRunningDataRestService.class );
         router.attach("/returnTripData", ProducerReturnTripDataRestService.class);
+        router.attach("/hotSpot", ProducerHotSpotRestService.class);
         return router;
     }
 }

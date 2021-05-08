@@ -1,14 +1,10 @@
 package com.runspec.producer;
 
 import com.alibaba.fastjson.JSONObject;
-import com.runspec.producer.util.TripDataReader;
-import com.runspec.producer.vo.RunnerData;
-import org.restlet.data.Form;
+import com.runspec.producer.util.TripPOIDataReader;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
-
-import java.util.Date;
 
 public class ProducerReturnTripDataRestService extends ServerResource {
 
@@ -24,8 +20,11 @@ public class ProducerReturnTripDataRestService extends ServerResource {
         String userId = data.getString("userId");
 
 
-        TripDataReader tdr = new TripDataReader(userId, tripId);
+        TripPOIDataReader tdr = new TripPOIDataReader();
         tdr.connectDatabase();
+
+
+
         return "get trip data request";
     }
 }
