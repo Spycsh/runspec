@@ -5,6 +5,8 @@ Sihan Chen sihanc@kth.se
 Yuehao Sui yuehao@kth.se  
 Zidi Chen zidi@kth.se
 
+[architecture](arch.png)
+
 ## Workflow
 
 android (open app)
