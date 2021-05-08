@@ -43,10 +43,7 @@ give a JSON string including: "longitude", "latitude", "tripId", "userId"
 
 
 ## To run
-Check producer, processor and statisticsboard modules have java version 1.8 (especially producer module).
-Check adviser module has java version 15 or above. (to use java.net.http package).
-
-Remember to replace the paths to your own paths.
+This project is based on Java 11.
 
 1. run Kafka
 
@@ -90,8 +87,7 @@ mvn exec:java
 
 ## To do
 
-[] try to make all modules in java version 15 (modify pom.xml)
-[] user account management?
+- [] user account management?
 
 
 
