@@ -19,23 +19,24 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.android.volley.Request
-import com.android.volley.Response
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.iotinfo.ui.dashboard.DashboardViewModel
 import com.example.iotinfo.ui.home.HomeViewModel
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
+import org.json.JSONObject
 import java.nio.charset.Charset
+
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
 
@@ -68,6 +69,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private lateinit var homeViewModel: HomeViewModel
 
+    private lateinit var queue : RequestQueue
+
+    private var tripId = System.currentTimeMillis().toString()
+
+    private var tripLock = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -95,6 +102,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         // create Location Request
         createLocationRequest()
+
+        queue = Volley.newRequestQueue(this)
 
         val builder = LocationSettingsRequest.Builder()
             .addLocationRequest(mLocationRequest)
@@ -192,6 +201,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 distance += result[0]
                 mLocation = location
             }
+
+            if (tripLock)
+                uploadData()
+
             Log.d("location","Distance-$distance")
             Log.d("location","Result-${result[0]}")
         } else {
@@ -272,7 +285,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun getAdvise(location: Location) {
-        val queue = Volley.newRequestQueue(this)
         val url = "http://" + sharedPref.getString(getString(R.string.saved_url),"")!! + ":8082/adviser/info"
         var mResponse = ""
         val stringRequest : StringRequest = object : StringRequest(
@@ -280,7 +292,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             { response ->
                 // Display the first 500 characters of the response string.
                 mResponse = response.toString()
-                Log.d("api",response)
+                Log.d("API",response)
             },
             { error ->
                 Log.d("API", "error => $error")
@@ -308,4 +320,26 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         Snackbar.make(findViewById(R.id.container), R.string.saved_pop, Snackbar.LENGTH_SHORT).show()
         checkName()
     }
+
+    private fun uploadData(){
+        val url = "http://" + sharedPref.getString(getString(R.string.saved_url),"")!! + ":8182/producer/runningData"
+        val userName = sharedPref.getString(getString(R.string.saved_user_name),"")!!
+        val jsonBody = JSONObject()
+        jsonBody.put("longitude", mLocation?.longitude.toString())
+        jsonBody.put("latitude", mLocation?.latitude.toString())
+        jsonBody.put("userId", userName)
+        jsonBody.put("tripId", tripId)
+
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.POST, url,jsonBody,
+            { response ->
+                Log.d("API", response.toString())
+            },
+            { error ->
+                Log.d("API", "error => $error")
+            })
+
+        queue.add(jsonObjectRequest)
+    }
+
 }
