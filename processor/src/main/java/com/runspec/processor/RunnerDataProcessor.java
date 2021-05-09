@@ -9,11 +9,11 @@ import com.mongodb.client.model.UpdateOptions;
 import com.runspec.processor.entity.POIRunnerData;
 import com.runspec.processor.util.GeoDistanceCalculator;
 import com.runspec.processor.util.PropertyFileReader;
-import com.runspec.processor.util.RunnerDataDecoder;
+//import com.runspec.processor.util.RunnerDataDecoder;
 import com.runspec.processor.util.RunnerDataDeserializer;
 import com.runspec.processor.vo.POIData;
 import com.runspec.processor.vo.RunnerData;
-import kafka.serializer.StringDecoder;
+//import kafka.serializer.StringDecoder;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.SparkConf;
@@ -62,6 +62,7 @@ public class RunnerDataProcessor {
 //        jssc.checkpoint(prop.getProperty("com.runspec.processor.spark.checkpoint.dir"));
 
         // read the runner data from Kafka
+        // Java 8, deprecated
 //        Map<String, String> kafkaParams = new HashMap<>();
 //        kafkaParams.put("zookeeper.connect", prop.getProperty("com.runspec.processor.kafka.zookeeper"));
 //        kafkaParams.put("metadata.broker.list", prop.getProperty("com.runspec.processor.kafka.brokerlist"));
@@ -116,20 +117,15 @@ public class RunnerDataProcessor {
             rdp.runnerData_collection = rdp.mongoDatabase.getCollection("runnerData");
             rdp.runnerPOIData_collection = rdp.mongoDatabase.getCollection("runnerPOIData");
             rdp.POIData_collection = rdp.mongoDatabase.getCollection("POI");
+//            rdp.POICountData_collection = rdp.mongoDatabase.getCollection("POICount");
             System.out.println("Connect to databases successfully");
         }catch (Exception e){
             System.err.println(e.getClass().getName()+": "+e.getMessage());
         }
 
-
-
         rdp.processRunnerData(msgDataStream);
 
-        // home 59.382831, 18.026270
         // process poi data
-        // Finished yet
-        // TODO here requires a new dataloader class to initialize the default POIData and here
-        //  only read the data from mongo. So here should be a list of POI to broadcast!!
         List<POIData> poiDataList = new ArrayList<>();
         FindIterable<Document> result = rdp.POIData_collection.find();
         for(Document doc: result){
@@ -138,6 +134,7 @@ public class RunnerDataProcessor {
             poiData.setLatitude((Double) doc.get("latitude"));
             poiData.setLongitude((Double) doc.get("longitude"));
             poiData.setRadius((Double) doc.get("radius")); // 500 meters
+            poiData.setCount((int)doc.get("count"));
 
             poiDataList.add(poiData);
         }
@@ -151,10 +148,6 @@ public class RunnerDataProcessor {
             Broadcast<POIData> broadcastPOIValue = jssc.sparkContext().broadcast(e);
             rdp.processPOIData(msgDataStream, broadcastPOIValue);
         }
-//        Broadcast<List<POIData>> broadcastPOIValues = jssc.sparkContext().
-//                broadcast(poiDataList);
-
-//        rdp.processPOIData(msgDataStream, broadcastPOIValues);
 
         //start context
         jssc.start();
@@ -196,7 +189,6 @@ public class RunnerDataProcessor {
 
 
         // pair with poi
-        // TODO should be a list of POI Values here
         JavaPairDStream<RunnerData, POIData> poiDStreamPair = runnerDataStreamFiltered
                 .mapToPair(runnerData -> new Tuple2<>(runnerData, broadcastPOIValues.value()));
 
@@ -206,8 +198,6 @@ public class RunnerDataProcessor {
         // store into mongo
         poiRunnerDataJavaDStream.foreachRDD((JavaRDD<POIRunnerData> rdds) -> {
             if(!rdds.isEmpty()){
-                System.out.println("Runner Data coming >>>>>>>");
-
 //                rdds.collect().forEach(data->System.out.println(data.getLongitude()));
                 rdds.collect().forEach(data -> storeInMongo(data));
             }
@@ -253,17 +243,44 @@ public class RunnerDataProcessor {
 
     /**
      *  use tripId, userId, poiId to distinguish the situation when
-     *  a runner is beside one POI in one trip
+     *  a runner is near one POI in one trip
      *  first search if there is one record with the same tripId, userId, poiId, if there is, update it
      *  else insert it
+     *  Correspondingly, if there is one new record with different tripId, userId, poiId,
+     *  it should update the POI count to plus 1
      * @param data
      */
     private void storeInMongo(POIRunnerData data){
+        boolean updateCountFlag = false;
+
         // https://blog.csdn.net/u013174217/article/details/54576109
         BasicDBObject searchQuery = new BasicDBObject()
                 .append("tripId", data.getTripId())
                 .append("userId", data.getUserId())
                 .append("poiId", data.getPOIId());
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        if(runnerPOIData_collection.count(searchQuery)==0){
+            System.out.println("here runnerdata processor.........");
+            // update the count in POICount table in Mongo
+            String poiId = data.getPOIId();
+
+            BasicDBObject searchPOICountQuery = new BasicDBObject();
+            searchPOICountQuery.put("POIId", data.getPOIId());
+            System.out.println(data.getPOIId());
+
+            FindIterable<Document> iterable = POIData_collection.find(searchPOICountQuery);
+            Document POICountRecord = iterable.first();
+            System.out.println(iterable.first());
+            System.out.println( (int)iterable.first().get("count") );
+            int newCount = (int)iterable.first().get("count") + 1;
+            POICountRecord.put("count", newCount);
+
+
+
+            POIData_collection.replaceOne(searchPOICountQuery, POICountRecord, options);
+        }
 
 
         Document newDocument = new Document()
@@ -273,10 +290,11 @@ public class RunnerDataProcessor {
                 .append("distance", data.getDistance())
                 .append("timestamp", data.getTimestamp());
 
-        UpdateOptions options = new UpdateOptions().upsert(true);
+
         // try
         // upsert
         System.out.println("---update document---"+newDocument.toString());
         runnerPOIData_collection.replaceOne(searchQuery, newDocument, options);
+
     }
 }

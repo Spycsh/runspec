@@ -109,6 +109,23 @@ cd ./producer
 mvn exec:java
 ```
 
+## JMeter Load test
+Here we can use JMeter to test the concurrency performance. For example, we set the default location to be KTH Kista as our testing POI data as follows:
+
+```json
+{
+	"longitude": 17.94948, 
+	"latitude": 59.40498, 
+	"tripId": ${__Random(100,900,tripId)}, 
+	"userId": ${__Random(1000,90000,userId)}
+}
+
+```
+
+In JMeter, create a `ThreadGroup` with 200 threads (users) in 1 loop. In the `HTTP Request` enter the above json in the request body. Meanwhile, in the `HTTP Header Manager`, specify the header `Content-Type` to be `application/json;charset=UTF-8`.
+
+The preliminary test result is that it is able to handle about 200 request at a time on my machine.
+
 ## To do
 
 - [x] change packages dependencies to adapt to Java 11

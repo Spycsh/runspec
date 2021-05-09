@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.runspec.producer.util.TripPOIDataReader;
 import com.runspec.producer.vo.POI;
+//import com.runspec.producer.vo.POICount;
 import com.runspec.producer.vo.POICount;
 import org.apache.log4j.Logger;
 import org.restlet.representation.Representation;

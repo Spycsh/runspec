@@ -7,6 +7,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.runspec.producer.vo.POI;
+//import com.runspec.producer.vo.POICount;
 import com.runspec.producer.vo.POICount;
 import org.bson.Document;
 
@@ -21,7 +22,7 @@ public class TripPOIDataReader {
     MongoCollection<Document> runnerData_collection;
     MongoCollection<Document> runnerPOIData_collection;
     MongoCollection<Document> POIData_collection;
-    MongoCollection<Document> POICountData_collection;
+//    MongoCollection<Document> POICountData_collection;
 
     //return a list of POI which the user passed by in the run trip
     public List<POI> getTripPOIData(String userId, String tripId) {
@@ -30,7 +31,7 @@ public class TripPOIDataReader {
         BasicDBObject filter = new BasicDBObject();
         filter.put("userId", userId);
         filter.put("tripId", tripId);
-        List<POI> passedPoiList = new ArrayList<POI>();
+        List<POI> passedPoiList = new ArrayList<>();
         FindIterable<Document> runnerResult = runnerPOIData_collection.find(filter);
         for(Document doc: runnerResult){
             POI poi = new POI();
@@ -61,7 +62,7 @@ public class TripPOIDataReader {
             mongoDatabase = mongoClient.getDatabase("runspec-0502");
             runnerData_collection = mongoDatabase.getCollection("runnerData");
             runnerPOIData_collection = mongoDatabase.getCollection("runnerPOIData");
-            POICountData_collection = mongoDatabase.getCollection("POICount");
+//            POICountData_collection = mongoDatabase.getCollection("POICount");
             POIData_collection = mongoDatabase.getCollection("POI");
             System.out.println("Connect to databases successfully");
         } catch (Exception e) {
@@ -74,7 +75,7 @@ public class TripPOIDataReader {
     //get five top hottest POI
     public List<POICount> getHotPoiData(){
         List<POICount> hotPoiList = new ArrayList<>();
-        FindIterable<Document> result = POICountData_collection.find().limit(5).sort(new BasicDBObject("count",-1));;
+        FindIterable<Document> result = POIData_collection.find().limit(5).sort(new BasicDBObject("count",-1));;
         for(Document doc: result){
             POICount poiData = new POICount();
             poiData.setPOIId(doc.get("POIId").toString());
