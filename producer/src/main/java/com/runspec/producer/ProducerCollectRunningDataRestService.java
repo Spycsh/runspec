@@ -3,6 +3,7 @@ package com.runspec.producer;
 
 import com.alibaba.fastjson.JSONObject;
 import com.runspec.producer.vo.RunnerData;
+import org.apache.log4j.Logger;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
@@ -13,7 +14,7 @@ import java.util.Date;
 
 //api service
 public class ProducerCollectRunningDataRestService extends ServerResource {
-//    private static final Logger logger = Logger.getLogger(ProducerCollectRunningDataRestService.class);
+    private static final Logger logger = Logger.getLogger(ProducerCollectRunningDataRestService.class);
 
     @Post("json")
     public String postRunnerData(Representation entity) throws Exception {

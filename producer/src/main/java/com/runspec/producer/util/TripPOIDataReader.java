@@ -21,7 +21,7 @@ public class TripPOIDataReader {
     MongoCollection<Document> runnerData_collection;
     MongoCollection<Document> runnerPOIData_collection;
     MongoCollection<Document> POIData_collection;
-    MongoCollection<Document> POICountData_collection;
+//    MongoCollection<Document> POICountData_collection;
 
     //return a list of POI which the user passed by in the run trip
     public List<POI> getTripPOIData(String userId, String tripId) {
@@ -61,7 +61,7 @@ public class TripPOIDataReader {
             mongoDatabase = mongoClient.getDatabase("runspec-0502");
             runnerData_collection = mongoDatabase.getCollection("runnerData");
             runnerPOIData_collection = mongoDatabase.getCollection("runnerPOIData");
-            POICountData_collection = mongoDatabase.getCollection("POICount");
+//            POICountData_collection = mongoDatabase.getCollection("POICount");
             POIData_collection = mongoDatabase.getCollection("POI");
             System.out.println("Connect to databases successfully");
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class TripPOIDataReader {
     //get five top hottest POI
     public List<POI> getHotPoiData(){
         List<POI> hotPoiList = new ArrayList<>();
-        FindIterable<Document> result = POICountData_collection.find().limit(5).sort(new BasicDBObject("count",-1));;
+        FindIterable<Document> result = POIData_collection.find().limit(5).sort(new BasicDBObject("count",-1));;
         for(Document doc: result){
             POI poiData = new POI();
             poiData.setPOIId(doc.get("POIId").toString());

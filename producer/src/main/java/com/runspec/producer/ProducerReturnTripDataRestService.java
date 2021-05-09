@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.runspec.producer.util.TripPOIDataReader;
 import com.runspec.producer.vo.POI;
+import org.apache.log4j.Logger;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
@@ -13,6 +14,7 @@ import java.util.List;
 
 //get the POI which the user passed in the current trip
 public class ProducerReturnTripDataRestService extends ServerResource {
+    private static final Logger logger = Logger.getLogger(ProducerReturnTripDataRestService.class);
 
     @Post("json")
     public String returnTripData(Representation entity) throws Exception {
