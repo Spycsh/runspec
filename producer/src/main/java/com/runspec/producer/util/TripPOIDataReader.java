@@ -8,6 +8,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.runspec.producer.vo.POI;
 //import com.runspec.producer.vo.POICount;
+import com.runspec.producer.vo.POICount;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -72,11 +73,11 @@ public class TripPOIDataReader {
 
 
     //get five top hottest POI
-    public List<POI> getHotPoiData(){
-        List<POI> hotPoiList = new ArrayList<>();
+    public List<POICount> getHotPoiData(){
+        List<POICount> hotPoiList = new ArrayList<>();
         FindIterable<Document> result = POIData_collection.find().limit(5).sort(new BasicDBObject("count",-1));;
         for(Document doc: result){
-            POI poiData = new POI();
+            POICount poiData = new POICount();
             poiData.setPOIId(doc.get("POIId").toString());
             poiData.setLatitude(doc.get("latitude").toString());
             poiData.setLongitude(doc.get("longitude").toString());

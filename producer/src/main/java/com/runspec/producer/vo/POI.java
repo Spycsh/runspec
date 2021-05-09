@@ -12,15 +12,6 @@ public class POI implements Serializable {
     private String longitude;
 
     private double radius;
-    private int count;
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
 
     public String getPOIId() {
         return POIId;
