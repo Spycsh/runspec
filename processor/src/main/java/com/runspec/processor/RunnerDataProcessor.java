@@ -10,19 +10,22 @@ import com.runspec.processor.entity.POIRunnerData;
 import com.runspec.processor.util.GeoDistanceCalculator;
 import com.runspec.processor.util.PropertyFileReader;
 import com.runspec.processor.util.RunnerDataDecoder;
+import com.runspec.processor.util.RunnerDataDeserializer;
 import com.runspec.processor.vo.POIData;
 import com.runspec.processor.vo.RunnerData;
 import kafka.serializer.StringDecoder;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.api.java.JavaDStream;
-import org.apache.spark.streaming.api.java.JavaPairDStream;
-import org.apache.spark.streaming.api.java.JavaPairInputDStream;
-import org.apache.spark.streaming.api.java.JavaStreamingContext;
-import org.apache.spark.streaming.kafka.KafkaUtils;
+import org.apache.spark.streaming.StreamingContext;
+import org.apache.spark.streaming.api.java.*;
+import org.apache.spark.streaming.kafka010.ConsumerStrategies;
+import org.apache.spark.streaming.kafka010.KafkaUtils;
+import org.apache.spark.streaming.kafka010.LocationStrategies;
 import org.bson.Document;
 import scala.Tuple2;
 
@@ -59,31 +62,49 @@ public class RunnerDataProcessor {
 //        jssc.checkpoint(prop.getProperty("com.runspec.processor.spark.checkpoint.dir"));
 
         // read the runner data from Kafka
-        Map<String, String> kafkaParams = new HashMap<>();
-        kafkaParams.put("zookeeper.connect", prop.getProperty("com.runspec.processor.kafka.zookeeper"));
-        kafkaParams.put("metadata.broker.list", prop.getProperty("com.runspec.processor.kafka.brokerlist"));
-        String topic = prop.getProperty("com.runspec.processor.kafka.topic");
-        Set<String> topicSet = new HashSet<>();
-        topicSet.add(topic);
+//        Map<String, String> kafkaParams = new HashMap<>();
+//        kafkaParams.put("zookeeper.connect", prop.getProperty("com.runspec.processor.kafka.zookeeper"));
+//        kafkaParams.put("metadata.broker.list", prop.getProperty("com.runspec.processor.kafka.brokerlist"));
+//        String topic = prop.getProperty("com.runspec.processor.kafka.topic");
+//        Set<String> topicSet = new HashSet<>();
+//        topicSet.add(topic);
         // create direct kafka stream
         // parameters: StreamingContext, K, V, KD, VD, Map<String, String>, Set
-        JavaPairInputDStream<String, RunnerData> directKafkaStream = KafkaUtils.createDirectStream(
-                jssc,
-                String.class,
-                RunnerData.class,
-                StringDecoder.class,
-                RunnerDataDecoder.class,
-                kafkaParams,
-                topicSet
-        );
+//        JavaPairInputDStream<String, RunnerData> directKafkaStream = KafkaUtils.createDirectStream(
+//                jssc,
+//                String.class,
+//                RunnerData.class,
+//                StringDecoder.class,
+//                RunnerDataDecoder.class,
+//                kafkaParams,
+//                topicSet
+//        );
+
+        Map<String, Object> kafkaParams = new HashMap<>();
+        kafkaParams.put("bootstrap.servers", "localhost:9092");
+        kafkaParams.put("zookeeper.connect", prop.getProperty("com.runspec.processor.kafka.zookeeper"));
+        kafkaParams.put("key.deserializer", StringDeserializer.class);
+//        kafkaParams.put("value.deserializer", RunnerDataDecoder.class);
+        kafkaParams.put("value.deserializer", RunnerDataDeserializer.class);
+        kafkaParams.put("group.id", "use_a_separate_group_id_for_each_stream");
+        kafkaParams.put("auto.offset.reset", "latest");
+        kafkaParams.put("enable.auto.commit", false);
+
+        Collection<String> topics = Arrays.asList(prop.getProperty("com.runspec.processor.kafka.topic"));
+        JavaInputDStream<ConsumerRecord<String, RunnerData>> stream =
+                KafkaUtils.createDirectStream(
+                        jssc,
+                        LocationStrategies.PreferConsistent(),
+                        ConsumerStrategies.Subscribe(topics, kafkaParams)
+                );
 
 
 
         //TODO filter
         //Create JavaDStream<RunnerData>
         //https://stackoverflow.com/questions/40926947/how-to-convert-javapairinputdstream-into-dataset-dataframe-in-spark
-        JavaDStream<RunnerData> msgDataStream = directKafkaStream.map(tuple -> tuple._2());
-
+//        JavaDStream<RunnerData> msgDataStream = directKafkaStream.map(tuple -> tuple._2());
+        JavaDStream<RunnerData> msgDataStream = stream.map(record -> record.value());
         //cache stream as it is used in total and window based computation
         msgDataStream.cache();
 
@@ -246,11 +267,11 @@ public class RunnerDataProcessor {
 
 
         Document newDocument = new Document()
-                        .append("tripId", data.getTripId())
-                        .append("userId", data.getUserId())
-                        .append("poiId", data.getPOIId())
-                        .append("distance", data.getDistance())
-                        .append("timestamp", data.getTimestamp());
+                .append("tripId", data.getTripId())
+                .append("userId", data.getUserId())
+                .append("poiId", data.getPOIId())
+                .append("distance", data.getDistance())
+                .append("timestamp", data.getTimestamp());
 
         UpdateOptions options = new UpdateOptions().upsert(true);
         // try
