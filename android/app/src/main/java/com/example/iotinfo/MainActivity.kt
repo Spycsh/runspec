@@ -3,6 +3,7 @@ package com.example.iotinfo
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -12,11 +13,10 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
-import android.widget.Button
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
@@ -25,6 +25,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
 
@@ -39,10 +41,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var stepData: TextView
     private lateinit var distanceData: TextView
 
-    private lateinit var nameText: TextView
+    private lateinit var nameText: EditText
     private lateinit var urlText: EditText
-
-    private lateinit var connectButton: Button
+    private lateinit var helloText: TextView
+//
+//    private lateinit var connectButton: Button
 
     private lateinit var sensorManager: SensorManager
     private lateinit var stepSensor: Sensor
@@ -52,8 +55,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var reportedSteps = 0
 
     private var distance = 0f
-
-    private lateinit var userName: String
+    private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,21 +67,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_settings
             )
         )
-//        setupActionBarWithNavController(navController, appBarConfiguration)
+        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
 
         // Get text views
         latitudeData = this.findViewById(R.id.latitudeData)
         longitudeData = this.findViewById(R.id.longitudeData)
         stepData = this.findViewById(R.id.stepData)
         distanceData = this.findViewById(R.id.distanceData)
-        urlText = this.findViewById(R.id.urlText)
-        nameText = this.findViewById(R.id.nameText)
-
-        connectButton = this.findViewById(R.id.connectButton)
+        helloText = this.findViewById(R.id.helloText)
 
         // create Location Request
         createLocationRequest()
@@ -108,10 +108,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
 
-        registerSensors()
+        // Get shared pref
+        sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE) ?: return
 
+        registerSensors()
         checkName()
     }
+
     override fun onResume() {
         super.onResume()
         if (requestingLocationUpdates) startLocationUpdates()
@@ -234,16 +237,33 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
 
+    @SuppressLint("SetTextI18n")
     private fun checkName(){
-        val sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE) ?: return
-        userName = sharedPref.getString(getString(R.string.saved_user_name),"")!!
-        if (userName!="")
+        val userName = sharedPref.getString(getString(R.string.saved_user_name),"")!!
+        if (userName == "")
             popNameSetting()
-        else
-            nameText.text = "Hello! $userName"
+        else {
+            helloText.text = "Hello! $userName"
+        }
     }
 
     private fun popNameSetting() {
-        TODO("Not yet implemented")
+        Snackbar.make(findViewById(R.id.container), R.string.no_name_pop, Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun getAdvise(location: Location) {
+        TODO("advise api")
+    }
+
+    fun saveAction(view: View){
+        urlText = this.findViewById(R.id.urlText)
+        nameText = this.findViewById(R.id.nameText)
+        with(sharedPref.edit()) {
+            putString(getString(R.string.saved_user_name), nameText.text.toString())
+            putString(getString(R.string.saved_url), urlText.text.toString())
+            apply()
+        }
+        Snackbar.make(findViewById(R.id.container), R.string.saved_pop, Snackbar.LENGTH_LONG).show()
+        checkName()
     }
 }
