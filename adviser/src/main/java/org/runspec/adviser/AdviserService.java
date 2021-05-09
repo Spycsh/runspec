@@ -28,8 +28,6 @@ public class AdviserService {
 
     String open_weather_api_key = "59448db54000f612be094c8dbeab93cb";
 
-
-
     @PostMapping(value = "/adviser/info")
     @ResponseBody
     public String getWeather(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws IOException, InterruptedException {

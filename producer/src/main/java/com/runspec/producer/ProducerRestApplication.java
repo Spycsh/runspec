@@ -6,10 +6,13 @@ import org.restlet.routing.Router;
 
 public class ProducerRestApplication extends Application {
 
+    //assign route information
     @Override
     public Restlet createInboundRoot(){
         Router router = new Router(getContext());
-        router.attach("/runningData", ProducerRestService.class );
+        router.attach("/runningData", ProducerCollectRunningDataRestService.class );
+        router.attach("/returnTripData", ProducerReturnTripDataRestService.class);
+        router.attach("/hotSpot", ProducerHotSpotRestService.class);
         return router;
     }
 }

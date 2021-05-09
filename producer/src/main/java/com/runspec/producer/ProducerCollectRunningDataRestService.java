@@ -3,22 +3,17 @@ package com.runspec.producer;
 
 import com.alibaba.fastjson.JSONObject;
 import com.runspec.producer.vo.RunnerData;
-import kafka.javaapi.producer.Producer;
-import kafka.producer.ProducerConfig;
 import org.restlet.representation.Representation;
-import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 import org.apache.log4j.Logger;
 
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.Properties;
 
 //api service
-public class ProducerRestService extends ServerResource {
-    private static final Logger logger = Logger.getLogger(ProducerRestService.class);
+public class ProducerCollectRunningDataRestService extends ServerResource {
+    private static final Logger logger = Logger.getLogger(ProducerCollectRunningDataRestService.class);
 
     @Post("json")
     public String postRunnerData(Representation entity) throws Exception {

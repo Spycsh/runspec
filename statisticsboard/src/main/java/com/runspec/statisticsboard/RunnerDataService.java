@@ -3,8 +3,9 @@ package com.runspec.statisticsboard;
 import com.runspec.statisticsboard.dao.POIRepository;
 import com.runspec.statisticsboard.dao.POIRunnerDataRepository;
 import com.runspec.statisticsboard.entity.POI;
+import com.runspec.statisticsboard.entity.POICount;
 import com.runspec.statisticsboard.entity.POIRunnerData;
-import com.runspec.statisticsboard.vo.POIMapData;
+import com.runspec.statisticsboard.util.POICountSaver;
 import com.runspec.statisticsboard.vo.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -72,18 +73,22 @@ public class RunnerDataService {
         // data for map
         List<POI> POIDataList = new ArrayList<>(poiRepository.findAll());
         // pair with count
-        List<POIMapData> POIMapList = new ArrayList<>();
+        List<POICount> poiCounts = new ArrayList<>();
+
         for(POI e: POIDataList){
-            POIMapData newObj = new POIMapData(e);
+            POICount newObj = new POICount(e);
             // Here should has the key
             newObj.setCount(countMap.getOrDefault(e.getPOIId(), 0));
 //            System.out.println("cnt:"+newObj.getCount());
-            POIMapList.add(newObj);
+            poiCounts.add(newObj);
         }
-        response.setPoiMapData(POIMapList);
+        response.setPoiMapData(poiCounts);
+
+        POICountSaver poiCountSaver = new POICountSaver();
+        poiCountSaver.storePOICountTable(poiCounts);
 
         System.out.println("Sending POIRunner data to UI... Length: "+ POIRunnerDataList.size());
-        System.out.println("Sending POICountMap data to UI...Length: " + POIMapList.size());
+        System.out.println("Sending POICountMap data to UI...Length: " + poiCounts.size());
 
         this.template.convertAndSend("/topic/runnerPOIData", response);
     }

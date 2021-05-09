@@ -1,15 +1,18 @@
 # RunSpec
-*specialize your running plan*
+
+*specialize your running*
 
 Sihan Chen sihanc@kth.se  
 Yuehao Sui yuehao@kth.se  
 Zidi Chen zidi@kth.se
 
+![architecture](arch.png)
+
 ## Workflow
 
 android (open app)
 
-⇨ adviser (weather and air information)
+⇨ adviser (weather and air information, hot spots)
 
 ⇨ android (display weather and air information)
 
@@ -19,44 +22,64 @@ android (open app)
 
 ⇨ processor (process data: how hot the predefined spots are) [display in statisticsboard] 
 
-⇨ android (display steps, length and heat of predefined spots)
+⇨ android (display steps, length and checklist of predefined spots)
 
 ## API:
 
-- `adviser`: 
+> One tripId for one run.
 
-http://localhost:8082/adviser/info
+- `http://localhost:8082/adviser/info`
 
 POST
 
-two parameters: longitude and latitude
+two parameters(not JSON): longitude, latitude
 
-- `producer`:
+in `adviser` module
 
-http://localhost:8182/producer/runningData
+return a JSON string with weather and air information
+
+- `http://localhost:8182/producer/runningData`
  
 POST
 
-give a JSON string including: "longitude", "latitude", "tripId", "userId"
+JSON string: "longitude", "latitude", "tripId", "userId"
 
+- `http://localhost:8182/producer/returnTripData`
+
+POST
+
+JSON string: "userId", "tripId"
+
+return POIs (with latitude, name, pOIId, radius, longitude) which current user passes by in the current trip in ***JSON***
+
+- `http://localhost:8182/producer/hotSpot`
+
+POST
+
+no param: we still use post here because we might need to post latitude and longitude to check the city for searching hottest spots ***in the future***.
+
+return 5 top hottest POIs in ***JSON*** (with latitude, name, pOIId, radius, longitude, count)
 
 ## To run
-Check producer, processor and statisticsboard modules have java version 1.8 (especially producer module).
-Check adviser module has java version 15 or above. (to use java.net.http package).
-
-Remember to replace the paths to your own paths.
+This project is based on Java 11.
 
 1. run Kafka
 
 one terminal: 
-`C:\kafka\bin\windows>zookeeper-server-start.bat ..\..\config\zookeeper.properties`
+```
+C:\kafka\bin\windows>zookeeper-server-start.bat ..\..\config\zookeeper.properties
+```
 
 another terminal:
-`C:\kafka\bin\windows>kafka-server-start.bat ..\..\config\server.properties`
+```
+C:\kafka\bin\windows>kafka-server-start.bat ..\..\config\server.properties
+```
 
 2. run mongodb
 
-`C:\MongoDB\bin>mongod --dbpath=C:\MongoDB\data\db `
+```
+C:\MongoDB\bin>mongod --dbpath=C:\MongoDB\data\db 
+```
 
 3. run
 
@@ -88,9 +111,12 @@ mvn exec:java
 
 ## To do
 
-[] try to make all modules in java version 15 (modify pom.xml)
-[] user account management?
-
+- [x] change packages dependencies to adapt to Java 11
+- [x] add api for top five spots
+- [x] add api to return the pois which the users passed by
+- [ ] user account management
+- [ ] android get data from backend
+- [ ] android UI
 
 
 [comment]: <> (Our project is to create a running App which records and displays real-time runners' running data &#40;produced by the built-in sensor of a mobile phone&#41; on his/her mobile phone and and offer appropriate running advices based on the running data. The main technology stack involves but is not limitted to Android, Kafka, Spark, MongoDB. The implementation can be divided into three parts:)
