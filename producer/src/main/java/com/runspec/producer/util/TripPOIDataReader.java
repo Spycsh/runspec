@@ -6,9 +6,9 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.runspec.producer.vo.POI;
+import com.runspec.producer.vo.POIView;
 //import com.runspec.producer.vo.POICount;
-import com.runspec.producer.vo.POICount;
+import com.runspec.producer.vo.POIData;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -25,34 +25,34 @@ public class TripPOIDataReader {
 //    MongoCollection<Document> POICountData_collection;
 
     //return a list of POI which the user passed by in the run trip
-    public List<POI> getTripPOIData(String userId, String tripId) {
+    public List<POIView> getTripPOIData(String userId, String tripId) {
 
         //get the record of current user and current trip
         BasicDBObject filter = new BasicDBObject();
         filter.put("userId", userId);
         filter.put("tripId", tripId);
-        List<POI> passedPoiList = new ArrayList<>();
+        List<POIView> passedPoiViewList = new ArrayList<>();
         FindIterable<Document> runnerResult = runnerPOIData_collection.find(filter);
         for(Document doc: runnerResult){
-            POI poi = new POI();
-            poi.setPOIId(doc.get("poiId").toString());
-            passedPoiList.add(poi);
+            POIView poiView = new POIView();
+            poiView.setPOIId(doc.get("poiId").toString());
+            passedPoiViewList.add(poiView);
         }
 
         //get poi information of the required poi
         FindIterable<Document> poiResult = POIData_collection.find();
         for(Document doc: poiResult){
             String id = doc.get("POIId").toString();
-            for( POI poi: passedPoiList){
-                if(id.equals(poi.getPOIId())){
-                    poi.setName(doc.get("name").toString());
-                    poi.setLatitude(doc.get("latitude").toString());
-                    poi.setLongitude(doc.get("longitude").toString());
-                    poi.setRadius(Double.parseDouble(doc.get("radius").toString()));
+            for( POIView poiView : passedPoiViewList){
+                if(id.equals(poiView.getPOIId())){
+                    poiView.setName(doc.get("name").toString());
+                    poiView.setLatitude(doc.get("latitude").toString());
+                    poiView.setLongitude(doc.get("longitude").toString());
+                    poiView.setRadius(Double.parseDouble(doc.get("radius").toString()));
                 }
             }
         }
-        return passedPoiList;
+        return passedPoiViewList;
     }
 
     //connect to database
@@ -73,20 +73,20 @@ public class TripPOIDataReader {
 
 
     //get five top hottest POI
-    public List<POICount> getHotPoiData(){
-        List<POICount> hotPoiList = new ArrayList<>();
+    public List<POIData> getHotPoiData(){
+        List<POIData> hotPoiDataList = new ArrayList<>();
         FindIterable<Document> result = POIData_collection.find().limit(5).sort(new BasicDBObject("count",-1));;
         for(Document doc: result){
-            POICount poiData = new POICount();
+            POIData poiData = new POIData();
             poiData.setPOIId(doc.get("POIId").toString());
             poiData.setLatitude(doc.get("latitude").toString());
             poiData.setLongitude(doc.get("longitude").toString());
             poiData.setRadius((Double) doc.get("radius")); // 500 meters
             poiData.setName(doc.get("name").toString());
             poiData.setCount(Integer.parseInt(doc.get("count").toString()));
-            hotPoiList.add(poiData);
+            hotPoiDataList.add(poiData);
         }
-        System.out.println(hotPoiList.toString());
-        return hotPoiList;
+        System.out.println(hotPoiDataList.toString());
+        return hotPoiDataList;
     }
 }

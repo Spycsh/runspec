@@ -4,14 +4,26 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 
-@Document(collection = "POI")
-public class POI implements Serializable {
+@Document(collection = "POICount")
+public class POIData implements Serializable {
     private String POIId;
     private String name;
     private String latitude;
     private String longitude;
-
     private double radius;
+    private int count;
+
+    public POIData(){
+
+    }
+
+    public POIData(POIView poiView) {
+        this.POIId = poiView.getPOIId();
+        this.latitude = poiView.getLatitude();
+        this.longitude = poiView.getLongitude();
+        this.name = poiView.getName();
+        this.radius = poiView.getRadius();
+    }
 
     public String getPOIId() {
         return POIId;
@@ -51,5 +63,13 @@ public class POI implements Serializable {
 
     public void setRadius(double radius) {
         this.radius = radius;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }

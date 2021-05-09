@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.runspec.producer.util.TripPOIDataReader;
-import com.runspec.producer.vo.POI;
+import com.runspec.producer.vo.POIView;
 import org.apache.log4j.Logger;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Post;
@@ -30,11 +30,11 @@ public class ProducerReturnTripDataRestService extends ServerResource {
 
         TripPOIDataReader tdr = new TripPOIDataReader();
         tdr.connectDatabase();
-        List<POI> passedPoiList = tdr.getTripPOIData(userId, tripId);
+        List<POIView> passedPoiViewList = tdr.getTripPOIData(userId, tripId);
 
         //pass pois to json string list
-        System.out.println(passedPoiList.toString());
-        JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(passedPoiList));
+        System.out.println(passedPoiViewList.toString());
+        JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(passedPoiViewList));
 
         return jsonArray.toJSONString();
     }

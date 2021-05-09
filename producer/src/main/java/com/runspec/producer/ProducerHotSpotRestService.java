@@ -2,13 +2,10 @@ package com.runspec.producer;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.runspec.producer.util.TripPOIDataReader;
-import com.runspec.producer.vo.POI;
 //import com.runspec.producer.vo.POICount;
-import com.runspec.producer.vo.POICount;
+import com.runspec.producer.vo.POIData;
 import org.apache.log4j.Logger;
-import org.restlet.representation.Representation;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 
@@ -33,10 +30,10 @@ public class ProducerHotSpotRestService extends ServerResource {
         TripPOIDataReader tdr = new TripPOIDataReader();
         tdr.connectDatabase();
 
-        List<POICount> hotPoiList = tdr.getHotPoiData();
+        List<POIData> hotPoiDataList = tdr.getHotPoiData();
 
         //parse to json array
-        JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(hotPoiList));
+        JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(hotPoiDataList));
 
         System.out.println(jsonArray.toJSONString());
 
