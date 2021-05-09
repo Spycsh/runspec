@@ -8,6 +8,6 @@
         android:title="@string/title_dashboard" />
 
     <item android:id="@+id/navigation_settings" android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_notifications" />
+        android:title="@string/title_settings" />
 
 </menu>

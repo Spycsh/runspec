@@ -25,12 +25,17 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.iotinfo.ui.dashboard.DashboardViewModel
 import com.example.iotinfo.ui.home.HomeViewModel
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
+import java.nio.charset.Charset
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
 
@@ -153,7 +158,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun createLocationRequest(){
         mLocationRequest =  LocationRequest.create().apply {
-            interval = 10000
+            interval = 5000
             fastestInterval = 1000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
@@ -183,7 +188,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     result
                 )
             }
-            if (result[0] >= 1) {
+            if (result[0] >= 1.5) {
                 distance += result[0]
                 mLocation = location
             }
@@ -191,6 +196,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             Log.d("location","Result-${result[0]}")
         } else {
             mLocation = location
+            getAdvise(location)
         }
 
 //        distanceData.text = "$distance m"
@@ -266,7 +272,28 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun getAdvise(location: Location) {
-        TODO("advise api")
+        val queue = Volley.newRequestQueue(this)
+        val url = "http://" + sharedPref.getString(getString(R.string.saved_url),"")!! + ":8082/adviser/info"
+        var mResponse = ""
+        val stringRequest : StringRequest = object : StringRequest(
+            Method.POST, url,
+            { response ->
+                // Display the first 500 characters of the response string.
+                mResponse = response.toString()
+                Log.d("api",response)
+            },
+            { error ->
+                Log.d("API", "error => $error")
+            }) {
+            override fun getBody(): ByteArray {
+                val requestBody = "latitude=${location.latitude}&longitude=${location.longitude}"
+                return requestBody.toByteArray(Charset.defaultCharset())
+            }
+        }
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest)
+
     }
 
     fun saveAction(view: View){
@@ -277,7 +304,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             putString(getString(R.string.saved_url), urlText.text.toString())
             apply()
         }
-        Snackbar.make(findViewById(R.id.container), R.string.saved_pop, Snackbar.LENGTH_LONG).show()
+        mLocation?.let { getAdvise(it) }
+        Snackbar.make(findViewById(R.id.container), R.string.saved_pop, Snackbar.LENGTH_SHORT).show()
         checkName()
     }
 }

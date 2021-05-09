@@ -26,11 +26,10 @@
     <string name="menu_slideshow">Slideshow</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_settings">Settings</string>
     <string name="url_lable">URL:</string>
     <string name="save">Save</string>
     <string name="name_lable">Username:</string>
-    <string name="title_settings">Settings</string>
     <string name="no_name_pop">Please set your name</string>
     <string name="saved_pop">Setting saved</string>
 </resources>
