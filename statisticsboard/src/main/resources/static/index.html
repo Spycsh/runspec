@@ -292,9 +292,10 @@
 						poiRunnerList.html(_head + _body_start + poiOutput + _body_end);
 					}
 
-
+					// alert(Object.keys(response));
+					// poiCountData
 					// POI count Map
-					jQuery.each(response.poiMapData, function (i, pmd) {
+					jQuery.each(response.poiData, function (i, pmd) {
 						// if there are no poiid in the addedMap, just add the markers
 						// if(!jQuery.inArray(pmd.poiid, Object.keys(addedMap))){
 						icon.options.html = pmd.count;

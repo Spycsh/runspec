@@ -7,7 +7,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.runspec.producer.vo.POI;
-import com.runspec.producer.vo.POICount;
+//import com.runspec.producer.vo.POICount;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class TripPOIDataReader {
         BasicDBObject filter = new BasicDBObject();
         filter.put("userId", userId);
         filter.put("tripId", tripId);
-        List<POI> passedPoiList = new ArrayList<POI>();
+        List<POI> passedPoiList = new ArrayList<>();
         FindIterable<Document> runnerResult = runnerPOIData_collection.find(filter);
         for(Document doc: runnerResult){
             POI poi = new POI();
@@ -72,11 +72,11 @@ public class TripPOIDataReader {
 
 
     //get five top hottest POI
-    public List<POICount> getHotPoiData(){
-        List<POICount> hotPoiList = new ArrayList<>();
+    public List<POI> getHotPoiData(){
+        List<POI> hotPoiList = new ArrayList<>();
         FindIterable<Document> result = POICountData_collection.find().limit(5).sort(new BasicDBObject("count",-1));;
         for(Document doc: result){
-            POICount poiData = new POICount();
+            POI poiData = new POI();
             poiData.setPOIId(doc.get("POIId").toString());
             poiData.setLatitude(doc.get("latitude").toString());
             poiData.setLongitude(doc.get("longitude").toString());

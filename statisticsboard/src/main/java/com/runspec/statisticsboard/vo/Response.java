@@ -1,6 +1,6 @@
 package com.runspec.statisticsboard.vo;
 
-import com.runspec.statisticsboard.entity.POICount;
+import com.runspec.statisticsboard.entity.POI;
 import com.runspec.statisticsboard.entity.POIRunnerData;
 
 import java.io.Serializable;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Response implements Serializable {
     private List<POIRunnerData> poiRunnerData;
-    private List<POICount> poiCounts;
+    private List<POI> poiData;
 
     public List<POIRunnerData> getPoiRunnerData() {
         return poiRunnerData;
@@ -19,11 +19,11 @@ public class Response implements Serializable {
         this.poiRunnerData = poiRunnerData;
     }
 
-    public List<POICount> getPoiCountData() {
-        return poiCounts;
+    public List<POI> getPoiData() {
+        return poiData;
     }
 
-    public void setPoiMapData(List<POICount> poiCounts) {
-        this.poiCounts = poiCounts;
+    public void setPoiData(List<POI> poiCounts) {
+        this.poiData = poiCounts;
     }
 }

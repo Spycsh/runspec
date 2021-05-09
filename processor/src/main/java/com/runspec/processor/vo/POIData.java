@@ -9,8 +9,15 @@ public class POIData implements Serializable {
     private double longitude;
 
     private double radius;
+    private int count;
 
+    public int getCount() {
+        return count;
+    }
 
+    public void setCount(int count) {
+        this.count = count;
+    }
 
     public String getPOIId() {
         return POIId;

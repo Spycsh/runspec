@@ -2,10 +2,11 @@ package com.runspec.statisticsboard;
 
 import com.runspec.statisticsboard.dao.POIRepository;
 import com.runspec.statisticsboard.dao.POIRunnerDataRepository;
+//import com.runspec.statisticsboard.dao.POICountRepository;
 import com.runspec.statisticsboard.entity.POI;
-import com.runspec.statisticsboard.entity.POICount;
+//import com.runspec.statisticsboard.entity.POICount;
 import com.runspec.statisticsboard.entity.POIRunnerData;
-import com.runspec.statisticsboard.util.POICountSaver;
+//import com.runspec.statisticsboard.util.POICountSaver;
 import com.runspec.statisticsboard.vo.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -42,6 +43,9 @@ public class RunnerDataService {
     @Autowired
     private POIRepository poiRepository;
 
+//    @Autowired
+//    private POICountRepository poiCountRepository;
+
     private static DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     // Method sends analyzed runner data in every 5 seconds
@@ -54,15 +58,18 @@ public class RunnerDataService {
         // search the POI data
         List<POIRunnerData> POIRunnerDataList = new ArrayList<>(poiRunnerDataRepository.findAll());
 
+
+        // search the count data
+        List<POI> POICountDataList = new ArrayList<>(poiRepository.findAll());
         // count the number
-        HashMap<String, Integer> countMap = new HashMap<>();
-        for(POIRunnerData e: POIRunnerDataList){
-            if(countMap.containsKey(e.getPOIId())){
-                countMap.put(e.getPOIId(), countMap.get(e.getPOIId()) + 1);
-            }else{
-                countMap.put(e.getPOIId(), 1);
-            }
-        }
+//        HashMap<String, Integer> countMap = new HashMap<>();
+//        for(POIRunnerData e: POIRunnerDataList){
+//            if(countMap.containsKey(e.getPOIId())){
+//                countMap.put(e.getPOIId(), countMap.get(e.getPOIId()) + 1);
+//            }else{
+//                countMap.put(e.getPOIId(), 1);
+//            }
+//        }
 
         // prepare response
         Response response = new Response();
@@ -73,22 +80,24 @@ public class RunnerDataService {
         // data for map
         List<POI> POIDataList = new ArrayList<>(poiRepository.findAll());
         // pair with count
-        List<POICount> poiCounts = new ArrayList<>();
+//        List<POICount> poiCounts = new ArrayList<>();
 
-        for(POI e: POIDataList){
-            POICount newObj = new POICount(e);
-            // Here should has the key
-            newObj.setCount(countMap.getOrDefault(e.getPOIId(), 0));
-//            System.out.println("cnt:"+newObj.getCount());
-            poiCounts.add(newObj);
-        }
-        response.setPoiMapData(poiCounts);
+//        for(POI e: POIDataList){
+//            POICount newObj = new POICount(e);
+//            // Here should has the key
+//            newObj.setCount(countMap.getOrDefault(e.getPOIId(), 0));
+////            System.out.println("cnt:"+newObj.getCount());
+//            poiCounts.add(newObj);
+//        }
 
-        POICountSaver poiCountSaver = new POICountSaver();
-        poiCountSaver.storePOICountTable(poiCounts);
+
+        response.setPoiData(POIDataList);
+
+//        POICountSaver poiCountSaver = new POICountSaver();
+//        poiCountSaver.storePOICountTable(POICountDataList);
 
         System.out.println("Sending POIRunner data to UI... Length: "+ POIRunnerDataList.size());
-        System.out.println("Sending POICountMap data to UI...Length: " + poiCounts.size());
+        System.out.println("Sending POICounts data to UI...Length: " + POIDataList.size());
 
         this.template.convertAndSend("/topic/runnerPOIData", response);
     }

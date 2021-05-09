@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.runspec.producer.util.TripPOIDataReader;
 import com.runspec.producer.vo.POI;
-import com.runspec.producer.vo.POICount;
+//import com.runspec.producer.vo.POICount;
 import org.apache.log4j.Logger;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Post;
@@ -32,7 +32,7 @@ public class ProducerHotSpotRestService extends ServerResource {
         TripPOIDataReader tdr = new TripPOIDataReader();
         tdr.connectDatabase();
 
-        List<POICount> hotPoiList = tdr.getHotPoiData();
+        List<POI> hotPoiList = tdr.getHotPoiData();
 
         //parse to json array
         JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(hotPoiList));

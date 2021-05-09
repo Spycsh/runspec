@@ -6,14 +6,14 @@ import com.runspec.producer.vo.RunnerData;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 
 import java.util.Date;
 
 //api service
 public class ProducerCollectRunningDataRestService extends ServerResource {
-    private static final Logger logger = Logger.getLogger(ProducerCollectRunningDataRestService.class);
+//    private static final Logger logger = Logger.getLogger(ProducerCollectRunningDataRestService.class);
 
     @Post("json")
     public String postRunnerData(Representation entity) throws Exception {
