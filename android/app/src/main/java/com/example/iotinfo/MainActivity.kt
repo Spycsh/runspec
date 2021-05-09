@@ -19,10 +19,14 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.iotinfo.ui.dashboard.DashboardViewModel
+import com.example.iotinfo.ui.home.HomeViewModel
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -57,6 +61,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var distance = 0f
     private lateinit var sharedPref: SharedPreferences
 
+    private lateinit var homeViewModel: HomeViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -73,6 +79,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         // Get text views
         latitudeData = this.findViewById(R.id.latitudeData)
@@ -186,9 +193,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             mLocation = location
         }
 
-        distanceData.text = "$distance m"
-        latitudeData.text = location.latitude.toString()
-        longitudeData.text = location.longitude.toString()
+//        distanceData.text = "$distance m"
+//        latitudeData.text = location.latitude.toString()
+//        longitudeData.text = location.longitude.toString()
+
+        homeViewModel.latitude.value = location.latitude
+        homeViewModel.longtitude.value = location.longitude
+        homeViewModel.distance.value = distance
+
     }
 
     private val requestPermissionLauncher =
@@ -229,7 +241,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (event != null) {
             if (initSteps == 0f)
                 initSteps = event.values[0]
-            stepData.text = (event.values[0]-initSteps).toString()
+//            stepData.text = (event.values[0]-initSteps).toString()
+            homeViewModel.step.value = (event.values[0]-initSteps).toInt()
         }
 
     }
@@ -243,7 +256,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (userName == "")
             popNameSetting()
         else {
-            helloText.text = "Hello! $userName"
+//            helloText.text = "Hello! $userName"
+            homeViewModel.name.value = "Hello! $userName"
         }
     }
 

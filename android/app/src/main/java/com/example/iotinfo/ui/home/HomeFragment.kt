@@ -28,13 +28,30 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+            ViewModelProvider(activity!!).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-//        val textView: TextView = root.findViewById(R.id.text_home)
-//        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-//            textView.text = it
-//        })
 
+        val latitude: TextView = root.findViewById(R.id.latitudeData)
+        val longtitude: TextView = root.findViewById(R.id.longitudeData)
+        val step: TextView = root.findViewById(R.id.stepData)
+        val distance: TextView = root.findViewById(R.id.distanceData)
+        val name: TextView = root.findViewById(R.id.helloText)
+
+        homeViewModel.latitude.observe(viewLifecycleOwner, Observer {
+            latitude.text = it.toString()
+        })
+        homeViewModel.longtitude.observe(viewLifecycleOwner, Observer {
+            longtitude.text = it.toString()
+        })
+        homeViewModel.distance.observe(viewLifecycleOwner, Observer {
+            distance.text = "$it m"
+        })
+        homeViewModel.step.observe(viewLifecycleOwner, Observer {
+            step.text = it.toString()
+        })
+        homeViewModel.name.observe(viewLifecycleOwner, Observer {
+            name.text = it.toString()
+        })
 
         return root
     }
