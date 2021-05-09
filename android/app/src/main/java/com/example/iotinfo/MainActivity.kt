@@ -12,10 +12,17 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 
@@ -32,6 +39,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var stepData: TextView
     private lateinit var distanceData: TextView
 
+    private lateinit var nameText: TextView
+    private lateinit var urlText: EditText
+
+    private lateinit var connectButton: Button
+
     private lateinit var sensorManager: SensorManager
     private lateinit var stepSensor: Sensor
 
@@ -41,17 +53,33 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private var distance = 0f
 
-//    private val REQUEST_FINE_LOCATION = 0
+    private lateinit var userName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        val navController = findNavController(R.id.nav_host_fragment)
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
+            )
+        )
+//        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
 
         // Get text views
         latitudeData = this.findViewById(R.id.latitudeData)
         longitudeData = this.findViewById(R.id.longitudeData)
         stepData = this.findViewById(R.id.stepData)
         distanceData = this.findViewById(R.id.distanceData)
+        urlText = this.findViewById(R.id.urlText)
+        nameText = this.findViewById(R.id.nameText)
+
+        connectButton = this.findViewById(R.id.connectButton)
 
         // create Location Request
         createLocationRequest()
@@ -81,8 +109,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
 
         registerSensors()
-    }
 
+        checkName()
+    }
     override fun onResume() {
         super.onResume()
         if (requestingLocationUpdates) startLocationUpdates()
@@ -175,12 +204,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACTIVITY_RECOGNITION
-            ) == PackageManager.PERMISSION_GRANTED -> {
+                    ActivityCompat.checkSelfPermission(
+                        this, Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(
+                        this, Manifest.permission.ACTIVITY_RECOGNITION
+                    ) == PackageManager.PERMISSION_GRANTED -> {
                 return true
             }
             else -> {
@@ -200,25 +229,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             stepData.text = (event.values[0]-initSteps).toString()
         }
 
-//        val sensor = event?.sensor
-//
-//        when (event!!.sensor.type) {
-//            Sensor.TYPE_STEP_COUNTER -> {
-//                if (reportedSteps < 1) {
-//                    // Log the initial value
-//                    reportedSteps = event.values[0].toInt()
-//                }
-//
-//                // Calculate steps taken based on
-//                // first value received.
-//                stepsTaken = event.values[0].toInt() - reportedSteps
-//
-//                // Output the value to the simple GUI
-//                stepData.text = stepsTaken.toString()
-//            }
-//        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+    }
+
+    private fun checkName(){
+        val sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE) ?: return
+        userName = sharedPref.getString(getString(R.string.saved_user_name),"")!!
+        if (userName!="")
+            popNameSetting()
+        else
+            nameText.text = "Hello! $userName"
+    }
+
+    private fun popNameSetting() {
+        TODO("Not yet implemented")
     }
 }
