@@ -59,7 +59,7 @@ class HomeFragment : Fragment() {
         homeViewModel.advise.observe(viewLifecycleOwner, Observer {
             currentWeather.text = "Weather: ${(it.get("weather") as JSONObject).get("currentWeather")}"
             humidity.text = "Humidity: ${(it.get("weather") as JSONObject).get("humidity")}%"
-            temperature.text = "Weather: ${(it.get("weather") as JSONObject).get("temperature").toString().subSequence(0,3)}℃"
+            temperature.text = "Temperature: ${(it.get("weather") as JSONObject).get("temperature").toString().subSequence(0,3)}℃"
             nextHour0Weather.text = "1 Hour Later: ${(it.get("weather") as JSONObject).get("nextHour0Weather")}"
             nextHour1Weather.text = "2 Hour Later: ${(it.get("weather") as JSONObject).get("nextHour1Weather")}"
             nextHour2Weather.text = "3 Hour Later: ${(it.get("weather") as JSONObject).get("nextHour2Weather")}"

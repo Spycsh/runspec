@@ -313,6 +313,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         mLocation?.let { getAdvise(it) }
         Snackbar.make(findViewById(R.id.container), R.string.saved_pop, Snackbar.LENGTH_SHORT).show()
         checkName()
+        mLocation?.let { getAdvise(it) }
     }
 
     private fun uploadData(){
