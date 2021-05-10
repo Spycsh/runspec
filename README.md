@@ -61,9 +61,9 @@ android (open app)
     - return 5 top hottest POIs in ***JSON*** (with latitude, name, pOIId, radius, longitude, count)
 
 ## To run
-This project is based on Java 11.
+This project is compatible with Java 11 and above.
 
-1. run Kafka
+1. start Kafka
 
 one terminal: 
 ```
@@ -75,13 +75,13 @@ another terminal:
 C:\kafka\bin\windows>kafka-server-start.bat ..\..\config\server.properties
 ```
 
-2. run mongodb
+2. start mongodb
 
 ```
 C:\MongoDB\bin>mongod --dbpath=C:\MongoDB\data\db 
 ```
 
-3. run
+3. run the project
 
 **Please install `mvn` tool firstly.**
 
@@ -123,8 +123,6 @@ Here we can use JMeter to test the concurrency performance. For example, we set 
 ```
 
 In JMeter, create a `ThreadGroup` with 200 threads (users) in 1 loop. In the `HTTP Request` enter the above json in the request body. Meanwhile, in the `HTTP Header Manager`, specify the header `Content-Type` to be `application/json;charset=UTF-8`.
-
-The preliminary test result is that it is able to handle about 200 request at a time on my machine.
 
 ## To do
 
