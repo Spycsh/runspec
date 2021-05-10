@@ -30,35 +30,35 @@ android (open app)
 
 - `http://localhost:8082/adviser/info`
 
-POST
+    - POST
+    
+    - two parameters(not JSON): longitude, latitude
+    
+    - in `adviser` module
 
-two parameters(not JSON): longitude, latitude
-
-in `adviser` module
-
-return a JSON string with weather and air information
+    - return a JSON string with weather and air information
 
 - `http://localhost:8182/producer/runningData`
  
-POST
+    - POST
 
-JSON string: "longitude", "latitude", "tripId", "userId"
+    - JSON string: "longitude", "latitude", "tripId", "userId"
 
 - `http://localhost:8182/producer/returnTripData`
 
-POST
-
-JSON string: "userId", "tripId"
-
-return POIs (with latitude, name, pOIId, radius, longitude) which current user passes by in the current trip in ***JSON***
+    - POST
+    
+    - JSON string: "userId", "tripId"
+    
+    - return POIs (with latitude, name, pOIId, radius, longitude) which current user passes by in the current trip in ***JSON***
 
 - `http://localhost:8182/producer/hotSpot`
 
-POST
+    - POST
 
-no param: we still use post here because we might need to post latitude and longitude to check the city for searching hottest spots ***in the future***.
+    > no param: we still use post here because we might need to post latitude and longitude to check the city for searching hottest spots ***in the future***.
 
-return 5 top hottest POIs in ***JSON*** (with latitude, name, pOIId, radius, longitude, count)
+    - return 5 top hottest POIs in ***JSON*** (with latitude, name, pOIId, radius, longitude, count)
 
 ## To run
 This project is based on Java 11.
