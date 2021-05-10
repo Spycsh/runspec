@@ -32,4 +32,5 @@
     <string name="name_lable">Username:</string>
     <string name="no_name_pop">Please set your name</string>
     <string name="saved_pop">Setting saved</string>
+    <string name="send">Send</string>
 </resources>

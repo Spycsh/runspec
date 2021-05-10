@@ -1,27 +1,22 @@
 package com.example.iotinfo.ui.home
 
-import android.hardware.Sensor
-import android.hardware.SensorManager
-import android.location.Location
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.iotinfo.R
-import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
+import org.json.JSONObject
 
 class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,25 +27,39 @@ class HomeFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
         val latitude: TextView = root.findViewById(R.id.latitudeData)
-        val longtitude: TextView = root.findViewById(R.id.longitudeData)
-        val step: TextView = root.findViewById(R.id.stepData)
-        val distance: TextView = root.findViewById(R.id.distanceData)
+        val longitude: TextView = root.findViewById(R.id.longitudeData)
         val name: TextView = root.findViewById(R.id.helloText)
+        val currentWeather: TextView = root.findViewById(R.id.weather_currentWeather)
+        val humidity: TextView = root.findViewById(R.id.weather_humidity)
+        val temperature: TextView = root.findViewById(R.id.weather_temperature)
+        val nextHour0Weather: TextView = root.findViewById(R.id.weather_nextHour0Weather)
+        val nextHour1Weather: TextView = root.findViewById(R.id.weather_nextHour1Weather)
+        val nextHour2Weather: TextView = root.findViewById(R.id.weather_nextHour2Weather)
+        val aqi: TextView = root.findViewById(R.id.air_aqi)
+        val pm2_5: TextView = root.findViewById(R.id.air_pm2_5)
+        val co: TextView = root.findViewById(R.id.air_co)
+        val no2: TextView = root.findViewById(R.id.air_no2)
 
         homeViewModel.latitude.observe(viewLifecycleOwner, Observer {
             latitude.text = it.toString()
         })
         homeViewModel.longtitude.observe(viewLifecycleOwner, Observer {
-            longtitude.text = it.toString()
-        })
-        homeViewModel.distance.observe(viewLifecycleOwner, Observer {
-            distance.text = "$it m"
-        })
-        homeViewModel.step.observe(viewLifecycleOwner, Observer {
-            step.text = it.toString()
+            longitude.text = it.toString()
         })
         homeViewModel.name.observe(viewLifecycleOwner, Observer {
             name.text = it.toString()
+        })
+        homeViewModel.advise.observe(viewLifecycleOwner, Observer {
+            currentWeather.text = "Weather: ${(it.get("weather") as JSONObject).get("currentWeather")}"
+            humidity.text = "Humidity: ${(it.get("weather") as JSONObject).get("humidity")}%"
+            temperature.text = "Weather: ${(it.get("weather") as JSONObject).get("temperature").toString().subSequence(0,3)}℃"
+            nextHour0Weather.text = "1 Hour Later: ${(it.get("weather") as JSONObject).get("nextHour0Weather")}"
+            nextHour1Weather.text = "2 Hour Later: ${(it.get("weather") as JSONObject).get("nextHour1Weather")}"
+            nextHour2Weather.text = "3 Hour Later: ${(it.get("weather") as JSONObject).get("nextHour2Weather")}"
+            aqi.text = "AQI: ${(it.get("air") as JSONObject).get("aqi")}"
+            pm2_5.text = "PM2.5: ${(it.get("air") as JSONObject).get("pm2_5")}"
+            no2.text = "NO2: ${(it.get("air") as JSONObject).get("no2")}"
+            co.text = "CO: ${(it.get("air") as JSONObject).get("co")}"
         })
 
         return root

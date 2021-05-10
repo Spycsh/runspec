@@ -29,9 +29,9 @@ import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.iotinfo.ui.dashboard.DashboardViewModel
 import com.example.iotinfo.ui.home.HomeViewModel
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import org.json.JSONObject
@@ -61,13 +61,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var stepSensor: Sensor
 
     private var initSteps = 0f
-    private var stepsTaken = 0
-    private var reportedSteps = 0
 
     private var distance = 0f
     private lateinit var sharedPref: SharedPreferences
 
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var dashboardViewModel: DashboardViewModel
 
     private lateinit var queue : RequestQueue
 
@@ -92,12 +91,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         navView.setupWithNavController(navController)
 
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        dashboardViewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
 
         // Get text views
         latitudeData = this.findViewById(R.id.latitudeData)
         longitudeData = this.findViewById(R.id.longitudeData)
-        stepData = this.findViewById(R.id.stepData)
-        distanceData = this.findViewById(R.id.distanceData)
         helloText = this.findViewById(R.id.helloText)
 
         // create Location Request
@@ -105,11 +103,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         queue = Volley.newRequestQueue(this)
 
-        val builder = LocationSettingsRequest.Builder()
-            .addLocationRequest(mLocationRequest)
-
-        val client: SettingsClient = LocationServices.getSettingsClient(this)
-        val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+//        val builder = LocationSettingsRequest.Builder()
+//            .addLocationRequest(mLocationRequest)
+//        val client: SettingsClient = LocationServices.getSettingsClient(this)
+//        val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
 
         // Get Location Client
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -197,7 +194,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     result
                 )
             }
-            if (result[0] >= 1.5) {
+            if (result[0] >= 2) {
                 distance += result[0]
                 mLocation = location
             }
@@ -218,7 +215,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         homeViewModel.latitude.value = location.latitude
         homeViewModel.longtitude.value = location.longitude
-        homeViewModel.distance.value = distance
+        dashboardViewModel.distance.value = distance
 
     }
 
@@ -261,7 +258,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             if (initSteps == 0f)
                 initSteps = event.values[0]
 //            stepData.text = (event.values[0]-initSteps).toString()
-            homeViewModel.step.value = (event.values[0]-initSteps).toInt()
+            dashboardViewModel.step.value = (event.values[0]-initSteps).toInt()
         }
 
     }
@@ -285,26 +282,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun getAdvise(location: Location) {
-        val url = "http://" + sharedPref.getString(getString(R.string.saved_url),"")!! + ":8082/adviser/info"
-        var mResponse = ""
-        val stringRequest : StringRequest = object : StringRequest(
-            Method.POST, url,
+        val url = "http://" + sharedPref.getString(getString(R.string.saved_url),"")!! + ":8082/adviser/info?latitude=${location.latitude}&longitude=${location.longitude}"
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.POST, url, null,
             { response ->
-                // Display the first 500 characters of the response string.
-                mResponse = response.toString()
-                Log.d("API",response)
+                Log.d("API",response.get("air").toString())
+                homeViewModel.advise.value = response
             },
             { error ->
                 Log.d("API", "error => $error")
-            }) {
-            override fun getBody(): ByteArray {
-                val requestBody = "latitude=${location.latitude}&longitude=${location.longitude}"
-                return requestBody.toByteArray(Charset.defaultCharset())
-            }
-        }
+            })
 
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest)
+        queue.add(jsonObjectRequest)
 
     }
 
@@ -340,6 +329,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             })
 
         queue.add(jsonObjectRequest)
+    }
+
+    fun clickToUpload(view: View) {
+        uploadData()
+        Snackbar.make(findViewById(R.id.container), R.string.send, Snackbar.LENGTH_SHORT).show()
     }
 
 }

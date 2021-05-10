@@ -3,6 +3,7 @@ package com.example.iotinfo.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import org.json.JSONObject
 
 class HomeViewModel : ViewModel() {
 
@@ -10,9 +11,7 @@ class HomeViewModel : ViewModel() {
 
     val longtitude = MutableLiveData<Double>()
 
-    val step = MutableLiveData<Int>()
-
-    val distance = MutableLiveData<Float>()
-
     val name = MutableLiveData<String>()
+
+    val advise = MutableLiveData<JSONObject>()
 }

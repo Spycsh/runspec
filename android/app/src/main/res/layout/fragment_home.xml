@@ -80,68 +80,106 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout3"
+    <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="64dp"
+        android:text="Weather &amp; Air"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
 
-        <TextView
-            android:id="@+id/stepText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/step"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/stepData"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/stepdata"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/stepText"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout4"
+    <TextView
+        android:id="@+id/weather_currentWeather"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-        <TextView
-            android:id="@+id/distanceText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/distance"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/weather_humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weather_temperature" />
 
-        <TextView
-            android:id="@+id/distanceData"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/distancedata"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/distanceText"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/weather_temperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weather_currentWeather" />
+
+    <TextView
+        android:id="@+id/weather_nextHour0Weather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/weather_currentWeather"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/weather_nextHour1Weather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toEndOf="@+id/weather_temperature"
+        app:layout_constraintTop_toBottomOf="@+id/weather_nextHour0Weather" />
+
+    <TextView
+        android:id="@+id/weather_nextHour2Weather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toEndOf="@+id/weather_humidity"
+        app:layout_constraintTop_toBottomOf="@+id/weather_nextHour1Weather" />
+
+    <TextView
+        android:id="@+id/air_aqi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weather_humidity" />
+
+    <TextView
+        android:id="@+id/air_pm2_5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/air_aqi"
+        app:layout_constraintTop_toBottomOf="@+id/weather_humidity" />
+
+    <TextView
+        android:id="@+id/air_co"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/air_pm2_5"
+        app:layout_constraintTop_toBottomOf="@+id/weather_humidity" />
+
+    <TextView
+        android:id="@+id/air_no2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/air_co"
+        app:layout_constraintTop_toBottomOf="@+id/weather_humidity" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

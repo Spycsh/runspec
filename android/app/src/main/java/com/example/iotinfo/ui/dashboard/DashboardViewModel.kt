@@ -6,5 +6,8 @@ import androidx.lifecycle.ViewModel
 
 class DashboardViewModel : ViewModel() {
 
+    val step = MutableLiveData<Int>()
+
+    val distance = MutableLiveData<Float>()
 
 }

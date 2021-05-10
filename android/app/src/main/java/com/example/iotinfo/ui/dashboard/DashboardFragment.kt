@@ -20,8 +20,21 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
+            ViewModelProvider(activity!!).get(DashboardViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
+        val step: TextView = root.findViewById(R.id.stepData)
+        val distance: TextView = root.findViewById(R.id.distanceData)
+
+        dashboardViewModel.distance.observe(viewLifecycleOwner, Observer {
+            try{
+                distance.text = "${it.toString().subSequence(0,4)} m"
+            } catch (e: Exception) {
+                distance.text = "${it.toString()} m"
+            }
+        })
+        dashboardViewModel.step.observe(viewLifecycleOwner, Observer {
+            step.text = it.toString()
+        })
 
         return root
     }

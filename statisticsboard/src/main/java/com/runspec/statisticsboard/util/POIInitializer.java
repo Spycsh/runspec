@@ -63,6 +63,7 @@ public class POIInitializer {
         POI_collection.insertOne(new Document("POIId", "5").append("name", "IKEA Barkarby").append("latitude", 59.42127).append("longitude", 17.85908).append("radius", 0.5).append("count", 0));
         POI_collection.insertOne(new Document("POIId", "6").append("name", "Universitetet subway station").append("latitude", 59.36528).append("longitude", 18.05445).append("radius", 0.5).append("count", 0));
         POI_collection.insertOne(new Document("POIId", "7").append("name", "Vasa Museum").append("latitude", 59.32916).append("longitude", 18.09122).append("radius", 0.5).append("count", 0));
+        POI_collection.insertOne(new Document("POIId", "8").append("name", "Lappis Campus").append("latitude", 59.3697868377635).append("longitude", 18.062775159109744).append("radius", 0.5).append("count", 0));
         System.out.println("POI initializer: insert ok");
     }
 }
