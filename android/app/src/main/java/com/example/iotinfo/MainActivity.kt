@@ -19,6 +19,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -92,6 +93,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         dashboardViewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
+
+        dashboardViewModel.tripLock.observe(this, Observer {
+            tripLock = it
+        })
 
         // Get text views
         latitudeData = this.findViewById(R.id.latitudeData)

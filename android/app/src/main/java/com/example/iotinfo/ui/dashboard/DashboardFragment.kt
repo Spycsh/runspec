@@ -18,10 +18,7 @@ class DashboardFragment : Fragment() {
 
     private lateinit var dashboardViewModel: DashboardViewModel
     private lateinit var root: View
-    private var time = 0
-    private var running = false
     private lateinit var timeView: TextView
-    private lateinit var mHandler: Handler
     private lateinit var togglebutton: ToggleButton
 
     override fun onCreateView(
@@ -56,40 +53,27 @@ class DashboardFragment : Fragment() {
             timeView.text = "$hours:$minutes:$seconds"
         })
 
+        togglebutton.isChecked = dashboardViewModel.tripLock.value!!
 
         togglebutton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                running = true
-                dashboardViewModel.time.value = 0
+                runTimer()
             } else {
-                running = false
+                stopTimer()
             }
         }
-
-        runTimer()
         return root
     }
 
     private fun runTimer(){
-        mHandler = Handler(Looper.getMainLooper())
-        mStatusChecker.run()
+        dashboardViewModel.tripLock.value = true
+        dashboardViewModel.time.value = 0
+        dashboardViewModel.mStatusChecker.run()
     }
 
     private fun stopTimer() {
-        mHandler.removeCallbacks(mStatusChecker)
-    }
-
-    private var mStatusChecker: Runnable = object : Runnable {
-
-        override fun run() {
-            try {
-                if (running) {
-                    dashboardViewModel.time.value = dashboardViewModel.time.value!! + 1
-                }
-            } finally {
-                mHandler.postDelayed(this, 1000)
-            }
-        }
+        dashboardViewModel.tripLock.value = false
+        dashboardViewModel.mHandler.removeCallbacks(dashboardViewModel.mStatusChecker)
     }
 
 }
