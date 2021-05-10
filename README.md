@@ -6,7 +6,7 @@ Sihan Chen sihanc@kth.se
 Yuehao Sui yuehao@kth.se  
 Zidi Chen zidi@kth.se
 
-![architecture](arch.png)
+![architecture](arch.JPG)
 
 ## Workflow
 
