@@ -131,7 +131,8 @@ In JMeter, create a `ThreadGroup` with 200 threads (users) in 1 loop. In the `HT
 - [x] add api to return the pois which the users passed by
 - [x] android get data from backend
 - [x] android UI
-
+- [ ] user Login
+- [ ] running trace history
 
 [comment]: <> (Our project is to create a running App which records and displays real-time runners' running data &#40;produced by the built-in sensor of a mobile phone&#41; on his/her mobile phone and and offer appropriate running advices based on the running data. The main technology stack involves but is not limitted to Android, Kafka, Spark, MongoDB. The implementation can be divided into three parts:)
 
