@@ -9,8 +9,12 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.iotinfo.R
+import com.example.iotinfo.ui.PopAdapter
 import org.json.JSONObject
+
 
 class HomeFragment : Fragment() {
 
@@ -39,6 +43,9 @@ class HomeFragment : Fragment() {
         val pm2_5: TextView = root.findViewById(R.id.air_pm2_5)
         val co: TextView = root.findViewById(R.id.air_co)
         val no2: TextView = root.findViewById(R.id.air_no2)
+        val popList: RecyclerView = root.findViewById(R.id.pop_list)
+
+        popList.layoutManager = LinearLayoutManager(activity)
 
         homeViewModel.latitude.observe(viewLifecycleOwner, Observer {
             latitude.text = it.toString()
@@ -60,6 +67,9 @@ class HomeFragment : Fragment() {
             pm2_5.text = "PM2.5: ${(it.get("air") as JSONObject).get("pm2_5")}"
             no2.text = "NO2: ${(it.get("air") as JSONObject).get("no2")}"
             co.text = "CO: ${(it.get("air") as JSONObject).get("co")}"
+        })
+        homeViewModel.popLocation.observe(viewLifecycleOwner, Observer {
+            popList.adapter = PopAdapter(it)
         })
 
         return root

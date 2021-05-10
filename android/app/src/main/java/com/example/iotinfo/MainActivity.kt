@@ -134,6 +134,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         // Get shared pref
         sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE) ?: return
 
+        sharedPref.getString(getString(R.string.saved_url),"")?.let { homeViewModel.updatePopLocation(it,queue)}
+
         registerSensors()
         checkName()
     }
