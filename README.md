@@ -131,9 +131,8 @@ The preliminary test result is that it is able to handle about 200 request at a 
 - [x] change packages dependencies to adapt to Java 11
 - [x] add api for top five spots
 - [x] add api to return the pois which the users passed by
-- [ ] user account management
-- [ ] android get data from backend
-- [ ] android UI
+- [x] android get data from backend
+- [x] android UI
 
 
 [comment]: <> (Our project is to create a running App which records and displays real-time runners' running data &#40;produced by the built-in sensor of a mobile phone&#41; on his/her mobile phone and and offer appropriate running advices based on the running data. The main technology stack involves but is not limitted to Android, Kafka, Spark, MongoDB. The implementation can be divided into three parts:)
