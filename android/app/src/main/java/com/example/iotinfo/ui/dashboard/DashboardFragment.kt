@@ -1,5 +1,7 @@
 package com.example.iotinfo.ui.dashboard
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,7 +14,12 @@ import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonArrayRequest
+import com.example.iotinfo.MainActivity
 import com.example.iotinfo.R
+import org.json.JSONArray
 
 class DashboardFragment : Fragment() {
 
@@ -20,6 +27,7 @@ class DashboardFragment : Fragment() {
     private lateinit var root: View
     private lateinit var timeView: TextView
     private lateinit var togglebutton: ToggleButton
+    private lateinit var sharedPref: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +37,8 @@ class DashboardFragment : Fragment() {
         dashboardViewModel =
             ViewModelProvider(activity!!).get(DashboardViewModel::class.java)
         root = inflater.inflate(R.layout.fragment_dashboard, container, false)
+        sharedPref = activity!!.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+
         val step: TextView = root.findViewById(R.id.stepData)
         val distance: TextView = root.findViewById(R.id.distanceData)
         togglebutton = root.findViewById(R.id.runToggleButton)
@@ -60,15 +70,26 @@ class DashboardFragment : Fragment() {
                 runTimer()
             } else {
                 stopTimer()
+                getTrip()
+                dashboardViewModel.updateMyTrip(
+                    sharedPref.getString(getString(R.string.saved_url),"")!!,
+                    sharedPref.getString(getString(R.string.saved_user_name),"")!!,
+                    (activity as MainActivity).getRequestQueue()
+                    )
             }
         }
         return root
+    }
+
+    private fun getTrip() {
+
     }
 
     private fun runTimer(){
         dashboardViewModel.tripLock.value = true
         dashboardViewModel.time.value = 0
         dashboardViewModel.mStatusChecker.run()
+        dashboardViewModel.newTripId()
     }
 
     private fun stopTimer() {

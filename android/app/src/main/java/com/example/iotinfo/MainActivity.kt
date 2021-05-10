@@ -71,8 +71,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private lateinit var queue : RequestQueue
 
-    private var tripId = System.currentTimeMillis().toString()
-
     private var tripLock = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -324,7 +322,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         jsonBody.put("longitude", mLocation?.longitude.toString())
         jsonBody.put("latitude", mLocation?.latitude.toString())
         jsonBody.put("userId", userName)
-        jsonBody.put("tripId", tripId)
+        jsonBody.put("tripId", dashboardViewModel.tripId.value)
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.POST, url,jsonBody,
@@ -341,6 +339,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     fun clickToUpload(view: View) {
         uploadData()
         Snackbar.make(findViewById(R.id.container), R.string.send, Snackbar.LENGTH_SHORT).show()
+    }
+
+    fun getRequestQueue(): RequestQueue {
+        return queue
     }
 
 }
