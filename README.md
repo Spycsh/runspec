@@ -126,13 +126,21 @@ In JMeter, create a `ThreadGroup` with 200 threads (users) in 1 loop. In the `HT
 
 ## To do
 
+- [x] basic infrastructure, producer+processor (maven), adviser+statisticsboard (maven springboot), android (gradle)
+- [x] runner data REST api with reslet
+- [x] connect Kafka producer, processor, specify json (de)serializer
+- [x] spark filter/store runner data stream into mongo
+- [x] POI points popularity measurement with POI id, user id and trip id
+- [x] backend statistics board, subscribe messages with stomp.js, map display with leaflet.js
 - [x] change packages dependencies to adapt to Java 11
+- [x] add api for weather and air
 - [x] add api for top five spots
 - [x] add api to return the pois which the users passed by
 - [x] android get data from backend
-- [x] android UI
-- [ ] user Login
+- [x] android UI demo
+- [ ] user login
 - [ ] running trace history
+- [ ] history of spots that a user has passed by
 
 [comment]: <> (Our project is to create a running App which records and displays real-time runners' running data &#40;produced by the built-in sensor of a mobile phone&#41; on his/her mobile phone and and offer appropriate running advices based on the running data. The main technology stack involves but is not limitted to Android, Kafka, Spark, MongoDB. The implementation can be divided into three parts:)
 
