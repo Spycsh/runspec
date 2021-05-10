@@ -70,4 +70,40 @@
             app:layout_constraintStart_toEndOf="@+id/distanceText"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- We will use text view "time_view" -->
+    <!-- to display the number of seconds. -->
+    android:id="@+id/time_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+
+    <!-- These below attributes make the stopwatch -->
+    <!-- timer nice and big. --><![CDATA[
+    android:textAppearance="@android:style/TextAppearance.Large"
+    android:textSize="56sp" />
+
+    ]]>
+
+    <TextView
+        android:id="@+id/time_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:textSize="36sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout4" />
+
+    <ToggleButton
+        android:id="@+id/runToggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:textOff="STOPPING"
+        android:textOn="RUNNING"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/time_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>

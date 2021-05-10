@@ -10,4 +10,6 @@ class DashboardViewModel : ViewModel() {
 
     val distance = MutableLiveData<Float>()
 
+    val time = MutableLiveData<Int>(0)
+
 }
