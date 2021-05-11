@@ -154,7 +154,7 @@ In JMeter, create a `ThreadGroup` with 200 threads (users) in 1 loop. In the `HT
 ![board](doc/board.PNG)
 
 * Android **dashboard** tab records steps, distances, time and the hot spot that runner has passed by during the last run. Android **home** tab records location of users, weather & air quality got from backend and top 5 running POI. In Android **setting** tab you can enter the ip address and name to test the app.
-![home](doc/android.png)
+![home](doc/android.PNG)
 
 [comment]: <> (Our project is to create a running App which records and displays real-time runners' running data &#40;produced by the built-in sensor of a mobile phone&#41; on his/her mobile phone and and offer appropriate running advices based on the running data. The main technology stack involves but is not limitted to Android, Kafka, Spark, MongoDB. The implementation can be divided into three parts:)
 
