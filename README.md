@@ -10,7 +10,7 @@ Sihan Chen sihanc@kth.se
 Yuehao Sui yuehao@kth.se  
 Zidi Chen zidi@kth.se
 
-![architecture](arch.JPG)
+![architecture](doc/arch.JPG)
 
 
 
@@ -147,6 +147,17 @@ In JMeter, create a `ThreadGroup` with 200 threads (users) in 1 loop. In the `HT
 - [ ] user login
 - [ ] running trace history
 - [ ] history of spots that a user has passed by
+
+## Demo so far
+
+* statistic board records runner POI data via stomp.js
+![board](doc/board.PNG)
+
+* Android dashboard tab records steps, distances, time and the hot spot that runner has passed by during the last run
+![dashboard](doc/dashboard.png)
+
+* Android home tab records location of users, weather & air quality got from backend and top 5 running POI
+![home](doc/home.jpg)
 
 [comment]: <> (Our project is to create a running App which records and displays real-time runners' running data &#40;produced by the built-in sensor of a mobile phone&#41; on his/her mobile phone and and offer appropriate running advices based on the running data. The main technology stack involves but is not limitted to Android, Kafka, Spark, MongoDB. The implementation can be divided into three parts:)
 
