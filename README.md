@@ -1,5 +1,8 @@
 # RunSpec
 
+[![License](https://img.shields.io/badge/MIT--only-blue)](https://github.com/Spycsh/RunSpec)
+
+
 *specialize your running*
 
 Sihan Chen sihanc@kth.se  
@@ -7,6 +10,8 @@ Yuehao Sui yuehao@kth.se
 Zidi Chen zidi@kth.se
 
 ![architecture](arch.JPG)
+
+
 
 ## Workflow
 
