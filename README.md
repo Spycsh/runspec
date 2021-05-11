@@ -1,6 +1,6 @@
 # RunSpec
 
-[![License](https://img.shields.io/badge/License-MIT--only-blue)](https://github.com/Spycsh/RunSpec)
+[![License](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Spycsh/RunSpec)
 
 
 *specialize your running*
