@@ -148,16 +148,13 @@ In JMeter, create a `ThreadGroup` with 200 threads (users) in 1 loop. In the `HT
 - [ ] running trace history
 - [ ] history of spots that a user has passed by
 
-## Demo so far
+## Demo of the very simple UI so far
 
 * statistic board records runner POI data via stomp.js
 ![board](doc/board.PNG)
 
-* Android dashboard tab records steps, distances, time and the hot spot that runner has passed by during the last run
-![dashboard](doc/dashboard.png)
-
-* Android home tab records location of users, weather & air quality got from backend and top 5 running POI
-![home](doc/home.jpg)
+* Android **dashboard** tab records steps, distances, time and the hot spot that runner has passed by during the last run. Android **home** tab records location of users, weather & air quality got from backend and top 5 running POI. In Android **setting** tab you can enter the ip address and name to test the app.
+![home](doc/android.png)
 
 [comment]: <> (Our project is to create a running App which records and displays real-time runners' running data &#40;produced by the built-in sensor of a mobile phone&#41; on his/her mobile phone and and offer appropriate running advices based on the running data. The main technology stack involves but is not limitted to Android, Kafka, Spark, MongoDB. The implementation can be divided into three parts:)
 
