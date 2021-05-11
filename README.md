@@ -1,6 +1,6 @@
 # RunSpec
 
-![License](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Spycsh/RunSpec)
+[![License](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Spycsh/RunSpec)
 ![platform](https://img.shields.io/badge/platform-android-lightgrey.svg)
 ![language](https://img.shields.io/badge/language-Java | Kotlin-orange.svg)
 
