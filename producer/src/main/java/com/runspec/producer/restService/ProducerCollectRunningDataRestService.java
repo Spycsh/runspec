@@ -1,7 +1,8 @@
-package com.runspec.producer;
+package com.runspec.producer.restService;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.runspec.producer.RunnerDataProducer;
 import com.runspec.producer.vo.RunnerData;
 import org.apache.log4j.Logger;
 import org.restlet.representation.Representation;

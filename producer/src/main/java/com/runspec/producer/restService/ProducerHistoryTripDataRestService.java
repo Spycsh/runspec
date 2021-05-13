@@ -1,4 +1,4 @@
-package com.runspec.producer;
+package com.runspec.producer.restService;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -12,29 +12,27 @@ import org.restlet.resource.ServerResource;
 
 import java.util.List;
 
-//get the POI which the user passed in the current trip
-public class ProducerReturnTripDataRestService extends ServerResource {
-    private static final Logger logger = Logger.getLogger(ProducerReturnTripDataRestService.class);
+public class ProducerHistoryTripDataRestService extends ServerResource {
+    private static final Logger logger = Logger.getLogger(ProducerHistoryTripDataRestService.class);
 
     @Post("json")
-    public String returnTripData(Representation entity) throws Exception {
+    public String returnHistoryTripData(Representation entity) throws Exception {
         String request;
         request = entity.getText();
         System.out.println(request);
 
         //parse json string
         JSONObject data = JSONObject.parseObject(request);
-        String tripId = data.getString("tripId");
         String userId = data.getString("userId");
 
 
         TripPOIDataReader tdr = new TripPOIDataReader();
         tdr.connectDatabase();
-        List<POIView> passedPoiViewList = tdr.getTripPOIData(userId, tripId);
+        List<POIView> historyPoiViewList = tdr.getHistoryTripPOIData(userId);
 
         //pass pois to json string list
-        System.out.println(passedPoiViewList.toString());
-        JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(passedPoiViewList));
+        System.out.println(historyPoiViewList.toString());
+        JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(historyPoiViewList));
 
         return jsonArray.toJSONString();
     }

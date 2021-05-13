@@ -1,7 +1,8 @@
-package com.runspec.producer;
+package com.runspec.producer.restService;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.runspec.producer.restService.ProducerCollectRunningDataRestService;
 import com.runspec.producer.util.TripPOIDataReader;
 //import com.runspec.producer.vo.POICount;
 import com.runspec.producer.vo.POIData;

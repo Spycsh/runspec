@@ -34,7 +34,7 @@ android (open app)
 
 > One tripId for one run.
 
-- `http://localhost:8082/adviser/info`
+1. `http://localhost:8082/adviser/info`
 
     - POST
     
@@ -44,13 +44,13 @@ android (open app)
 
     - return a JSON string with weather and air information
 
-- `http://localhost:8182/producer/runningData`
+2. `http://localhost:8182/producer/runningData`
  
     - POST
 
     - JSON string: "longitude", "latitude", "tripId", "userId"
 
-- `http://localhost:8182/producer/returnTripData`
+3. `http://localhost:8182/producer/returnTripData`
 
     - POST
     
@@ -58,7 +58,7 @@ android (open app)
     
     - return POIs (with latitude, name, pOIId, radius, longitude) which current user passes by in the current trip in ***JSON***
 
-- `http://localhost:8182/producer/hotSpot`
+4. `http://localhost:8182/producer/hotSpot`
 
     - POST
 
@@ -66,6 +66,13 @@ android (open app)
 
     - return 5 top hottest POIs in ***JSON*** (with latitude, name, pOIId, radius, longitude, count)
 
+5. `http://localhost:8182/producer/returnHistoryTripData`
+
+    - POST
+
+   - JSON string: "userId"
+
+   - return POIs which the user passed in all the trips, no duplicates.
 ## To run
 This project is compatible with Java 11 and above.
 

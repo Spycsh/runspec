@@ -11,8 +11,7 @@ import com.runspec.producer.vo.POIView;
 import com.runspec.producer.vo.POIData;
 import org.bson.Document;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 //read trip data from mongo db
 public class TripPOIDataReader {
@@ -86,7 +85,40 @@ public class TripPOIDataReader {
             poiData.setCount(Integer.parseInt(doc.get("count").toString()));
             hotPoiDataList.add(poiData);
         }
-        System.out.println(hotPoiDataList.toString());
+
         return hotPoiDataList;
+    }
+
+    public List<POIView> getHistoryTripPOIData(String userId) {
+
+        //get the records of current user
+        BasicDBObject filter = new BasicDBObject();
+        filter.put("userId", userId);
+        Map<String, POIView> historyPoiViewMap = new HashMap<>();
+        FindIterable<Document> runnerResult = runnerPOIData_collection.find(filter);
+        for(Document doc: runnerResult){
+            POIView poiView = new POIView();
+            poiView.setPOIId(doc.get("poiId").toString());
+            historyPoiViewMap.put(doc.get("poiId").toString(), poiView);
+        }
+
+        List<POIView> filteredPoiViewList = new ArrayList<>();
+        filteredPoiViewList.addAll(historyPoiViewMap.values());
+
+
+        //get poi information of the required poi
+        FindIterable<Document> poiResult = POIData_collection.find();
+        for(Document doc: poiResult){
+            String id = doc.get("POIId").toString();
+            for( POIView poiView : filteredPoiViewList){
+                if(id.equals(poiView.getPOIId())){
+                    poiView.setName(doc.get("name").toString());
+                    poiView.setLatitude(doc.get("latitude").toString());
+                    poiView.setLongitude(doc.get("longitude").toString());
+                    poiView.setRadius(Double.parseDouble(doc.get("radius").toString()));
+                }
+            }
+        }
+        return filteredPoiViewList;
     }
 }
