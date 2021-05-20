@@ -10,7 +10,7 @@ Sihan Chen sihanc@kth.se
 Yuehao Sui yuehao@kth.se  
 Zidi Chen zidi@kth.se
 
-![architecture](doc/arch.JPG)
+![architecture](doc/arch.PNG)
 
 
 
