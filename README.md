@@ -151,9 +151,9 @@ In JMeter, create a `ThreadGroup` with 200 threads (users) in 1 loop. In the `HT
 - [x] add api to return the pois which the users passed by
 - [x] android get data from backend
 - [x] android UI demo
-- [ ] user login
+<!-- - [ ] user login
 - [ ] running trace history
-- [ ] history of spots that a user has passed by
+- [ ] history of spots that a user has passed by -->
 
 ## Demo of the very simple UI so far
 
