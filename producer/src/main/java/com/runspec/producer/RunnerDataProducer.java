@@ -2,6 +2,8 @@ package com.runspec.producer;
 
 //import org.apache.kafka.clients.producer.KafkaProducer;
 
+//import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.runspec.producer.util.RunnerDataSerializer;
 import com.runspec.producer.vo.RunnerData;
 import kafka.producer.KeyedMessage;
@@ -19,6 +21,10 @@ import org.restlet.data.Protocol;
 
 import java.util.*;
 
+import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
+import java.text.MessageFormat;
 /**
  * read the runner data from sensor and push it to KafKa Stream
  */
@@ -56,10 +62,67 @@ public class RunnerDataProducer {
     public static void main(String args[]) throws Exception {
 
 
-        Component component = new ProducerRestComponent();
-        component.getServers().add(Protocol.HTTP, 8182);
-        component.start();
+//        Component component = new ProducerRestComponent();
+//        component.getServers().add(Protocol.HTTP, 8182);
+//        component.start();
+        String broker = "tcp://0.0.0.0:1883";
+        String clientId = "JavaClient";
 
+        MemoryPersistence persistence = new MemoryPersistence();
+
+        try {
+            MqttClient mqttClient = new MqttClient(broker, clientId, persistence);
+            MqttConnectOptions connOpts = new MqttConnectOptions();
+            connOpts.setCleanSession(true);
+            System.out.println("Connecting to broker:" + broker);
+            mqttClient.connect(connOpts);
+            System.out.println("Connected....");
+
+            String topic = "runspec/runnerdata";
+            System.out.println("Subscribe to topic: " + topic);
+            mqttClient.subscribe(topic);
+
+            mqttClient.setCallback(new MqttCallback() {
+                @Override
+                public void connectionLost(Throwable throwable) {
+
+                }
+
+                @Override
+                public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+                    System.out.println("message arrived from mqtt");
+                    // parse the payload as json and get runner info from it
+                    byte[] bArr = mqttMessage.getPayload();
+                    JSONObject data = JSONObject.parseObject(new String(bArr));
+                    String longitude = data.getString("longitude");
+                    String latitude = data.getString("latitude");
+                    String tripId = data.getString("tripId");
+                    String userId = data.getString("userId");
+
+                    //generate runnerData
+                    RunnerData runnerData = new RunnerData(tripId, userId, longitude, latitude, new Date());
+
+                    //initialize
+                    RunnerDataProducer runnerDataProducer = new RunnerDataProducer();
+                    runnerDataProducer.initializeKafkaProperties();
+                    // push runnerdata events to Kafka
+                    runnerDataProducer.sendEventToKafka(runnerData);
+
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+
+                }
+            });
+        }catch (MqttException e) {
+            System.out.println("reason" + e.getReasonCode());
+            System.out.println("msg" + e.getMessage());
+            System.out.println("loc" + e.getLocalizedMessage());
+            System.out.println("cause" + e.getCause());
+            System.out.println("excep" + e);
+            e.printStackTrace();
+        }
 
     }
 
