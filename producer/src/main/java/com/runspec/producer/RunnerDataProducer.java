@@ -61,10 +61,12 @@ public class RunnerDataProducer {
 
     public static void main(String args[]) throws Exception {
 
+        // use this part of code if you want to use REST to receive the data from edge device
+        //        Component component = new ProducerRestComponent();
+        //        component.getServers().add(Protocol.HTTP, 8182);
+        //        component.start();
 
-//        Component component = new ProducerRestComponent();
-//        component.getServers().add(Protocol.HTTP, 8182);
-//        component.start();
+        // Here use mqtt broker
         String broker = "tcp://0.0.0.0:1883";
         String clientId = "JavaClient";
 

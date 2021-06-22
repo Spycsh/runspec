@@ -9,11 +9,9 @@ import com.mongodb.client.model.UpdateOptions;
 import com.runspec.processor.entity.POIRunnerData;
 import com.runspec.processor.util.GeoDistanceCalculator;
 import com.runspec.processor.util.PropertyFileReader;
-//import com.runspec.processor.util.RunnerDataDecoder;
 import com.runspec.processor.util.RunnerDataDeserializer;
 import com.runspec.processor.vo.POIData;
 import com.runspec.processor.vo.RunnerData;
-//import kafka.serializer.StringDecoder;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.SparkConf;
@@ -52,40 +50,16 @@ public class RunnerDataProcessor {
         SparkConf sc = new SparkConf()
                 .setAppName(prop.getProperty("com.runspec.processor.spark.app.name"))
                 .setMaster(prop.getProperty("com.runspec.processor.spark.master"));
-//                .set("spark.mongodb.input.uri", prop.getProperty("com.runspec.processor.mongo.uri"))
-//                .set("spark.mongodb.output.uri", prop.getProperty("com.runspec.processor.mongo.uri"));
 
         JavaSparkContext jsc = new JavaSparkContext(sc); // Create a Java Spark Context
-        //batch interval of 5 seconds for incoming stream
+        // batch interval of 5 seconds for incoming stream
         //see https://spark.apache.org/docs/latest/streaming-programming-guide.html#setting-the-right-batch-interval
         JavaStreamingContext jssc = new JavaStreamingContext(jsc, Durations.seconds(5));
-//        jssc.checkpoint(prop.getProperty("com.runspec.processor.spark.checkpoint.dir"));
-
-        // read the runner data from Kafka
-        // Java 8, deprecated
-//        Map<String, String> kafkaParams = new HashMap<>();
-//        kafkaParams.put("zookeeper.connect", prop.getProperty("com.runspec.processor.kafka.zookeeper"));
-//        kafkaParams.put("metadata.broker.list", prop.getProperty("com.runspec.processor.kafka.brokerlist"));
-//        String topic = prop.getProperty("com.runspec.processor.kafka.topic");
-//        Set<String> topicSet = new HashSet<>();
-//        topicSet.add(topic);
-        // create direct kafka stream
-        // parameters: StreamingContext, K, V, KD, VD, Map<String, String>, Set
-//        JavaPairInputDStream<String, RunnerData> directKafkaStream = KafkaUtils.createDirectStream(
-//                jssc,
-//                String.class,
-//                RunnerData.class,
-//                StringDecoder.class,
-//                RunnerDataDecoder.class,
-//                kafkaParams,
-//                topicSet
-//        );
 
         Map<String, Object> kafkaParams = new HashMap<>();
         kafkaParams.put("bootstrap.servers", "localhost:9092");
         kafkaParams.put("zookeeper.connect", prop.getProperty("com.runspec.processor.kafka.zookeeper"));
         kafkaParams.put("key.deserializer", StringDeserializer.class);
-//        kafkaParams.put("value.deserializer", RunnerDataDecoder.class);
         kafkaParams.put("value.deserializer", RunnerDataDeserializer.class);
         kafkaParams.put("group.id", "use_a_separate_group_id_for_each_stream");
         kafkaParams.put("auto.offset.reset", "latest");
@@ -99,12 +73,6 @@ public class RunnerDataProcessor {
                         ConsumerStrategies.Subscribe(topics, kafkaParams)
                 );
 
-
-
-        //TODO filter
-        //Create JavaDStream<RunnerData>
-        //https://stackoverflow.com/questions/40926947/how-to-convert-javapairinputdstream-into-dataset-dataframe-in-spark
-//        JavaDStream<RunnerData> msgDataStream = directKafkaStream.map(tuple -> tuple._2());
         JavaDStream<RunnerData> msgDataStream = stream.map(record -> record.value());
         //cache stream as it is used in total and window based computation
         msgDataStream.cache();
@@ -117,7 +85,6 @@ public class RunnerDataProcessor {
             rdp.runnerData_collection = rdp.mongoDatabase.getCollection("runnerData");
             rdp.runnerPOIData_collection = rdp.mongoDatabase.getCollection("runnerPOIData");
             rdp.POIData_collection = rdp.mongoDatabase.getCollection("POI");
-//            rdp.POICountData_collection = rdp.mongoDatabase.getCollection("POICount");
             System.out.println("Connect to databases successfully");
         }catch (Exception e){
             System.err.println(e.getClass().getName()+": "+e.getMessage());
@@ -164,19 +131,14 @@ public class RunnerDataProcessor {
             if(!rdds.isEmpty()){
                 System.out.println("Runner Data coming >>>>>>>");
 
-//                rdds.collect().forEach(data->System.out.println(data.getLongitude()));
+                // rdds.collect().forEach(data->System.out.println(data.getLongitude()));
                 rdds.collect().forEach(data -> storeInMongo(data));
             }
 
         });
     }
 
-    /**
-     * Method to get the vehicles which are in radius of POI and their distance from POI.
-     *
-     * @param msgDataStream original IoT data stream
-     * @param broadcastPOIValues variable containing POI coordinates, route and vehicle types to monitor.
-     */
+
     public void processPOIData(JavaDStream<RunnerData> msgDataStream, Broadcast<POIData> broadcastPOIValues) {
         JavaDStream<RunnerData> runnerDataStreamFiltered = msgDataStream
                 .filter(rd -> GeoDistanceCalculator.isInPOIRadius(
@@ -192,13 +154,12 @@ public class RunnerDataProcessor {
         JavaPairDStream<RunnerData, POIData> poiDStreamPair = runnerDataStreamFiltered
                 .mapToPair(runnerData -> new Tuple2<>(runnerData, broadcastPOIValues.value()));
 
-        // Transform to dstream of POIRunner
+        // transform to dstream of POIRunner
         JavaDStream<POIRunnerData> poiRunnerDataJavaDStream = poiDStreamPair.map(poiRunnerDataFunc);
 
         // store into mongo
         poiRunnerDataJavaDStream.foreachRDD((JavaRDD<POIRunnerData> rdds) -> {
             if(!rdds.isEmpty()){
-//                rdds.collect().forEach(data->System.out.println(data.getLongitude()));
                 rdds.collect().forEach(data -> storeInMongo(data));
             }
 
@@ -228,18 +189,14 @@ public class RunnerDataProcessor {
     });
 
     private void storeInMongo(RunnerData data){
-
-
         Document document = new Document("tripId", data.getTripId()).
                 append("userId",data.getUserId()).
                 append("longitude", data.getLongitude()).
                 append("latitude", data.getLatitude());
-//        try
+
         System.out.println("---insert into Mongo---"+document.toString());
         runnerData_collection.insertOne(document);
     }
-
-    // insert
 
     /**
      *  use tripId, userId, poiId to distinguish the situation when
@@ -251,9 +208,6 @@ public class RunnerDataProcessor {
      * @param data
      */
     private void storeInMongo(POIRunnerData data){
-        boolean updateCountFlag = false;
-
-        // https://blog.csdn.net/u013174217/article/details/54576109
         BasicDBObject searchQuery = new BasicDBObject()
                 .append("tripId", data.getTripId())
                 .append("userId", data.getUserId())
@@ -277,11 +231,8 @@ public class RunnerDataProcessor {
             int newCount = (int)iterable.first().get("count") + 1;
             POICountRecord.put("count", newCount);
 
-
-
             POIData_collection.replaceOne(searchPOICountQuery, POICountRecord, options);
         }
-
 
         Document newDocument = new Document()
                 .append("tripId", data.getTripId())
@@ -289,7 +240,6 @@ public class RunnerDataProcessor {
                 .append("poiId", data.getPOIId())
                 .append("distance", data.getDistance())
                 .append("timestamp", data.getTimestamp());
-
 
         // try
         // upsert

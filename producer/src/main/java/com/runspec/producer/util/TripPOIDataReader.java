@@ -7,7 +7,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.runspec.producer.vo.POIView;
-//import com.runspec.producer.vo.POICount;
 import com.runspec.producer.vo.POIData;
 import org.bson.Document;
 
@@ -21,11 +20,9 @@ public class TripPOIDataReader {
     MongoCollection<Document> runnerData_collection;
     MongoCollection<Document> runnerPOIData_collection;
     MongoCollection<Document> POIData_collection;
-//    MongoCollection<Document> POICountData_collection;
 
     //return a list of POI which the user passed by in the run trip
     public List<POIView> getTripPOIData(String userId, String tripId) {
-
         //get the record of current user and current trip
         BasicDBObject filter = new BasicDBObject();
         filter.put("userId", userId);
@@ -61,7 +58,6 @@ public class TripPOIDataReader {
             mongoDatabase = mongoClient.getDatabase("runspec-0502");
             runnerData_collection = mongoDatabase.getCollection("runnerData");
             runnerPOIData_collection = mongoDatabase.getCollection("runnerPOIData");
-//            POICountData_collection = mongoDatabase.getCollection("POICount");
             POIData_collection = mongoDatabase.getCollection("POI");
             System.out.println("Connect to databases successfully");
         } catch (Exception e) {

@@ -31,20 +31,12 @@ public class RunnerDataService {
     @Autowired
     private SimpMessagingTemplate template;
 
-//    @Autowired
-//    private MongoTemplate mongoTemplate;
-
-//    @Autowired
-//    private TotalRunnerDataRepository totalRunnerDataRepository;
-
     @Autowired
     private POIRunnerDataRepository poiRunnerDataRepository;
 
     @Autowired
     private POIRepository poiRepository;
 
-//    @Autowired
-//    private POICountRepository poiCountRepository;
 
     private static DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -55,46 +47,18 @@ public class RunnerDataService {
         // get the runner data by date
 //        totalRunnerDataRepository.findRunnerDataByDate(sdf.format(new Date())).forEach(e -> totalRunnerDataList.add(e));
 
-        // search the POI data
-        List<POIRunnerData> POIRunnerDataList = new ArrayList<>(poiRunnerDataRepository.findAll());
-
-
-        // search the count data
-        List<POI> POICountDataList = new ArrayList<>(poiRepository.findAll());
-        // count the number
-//        HashMap<String, Integer> countMap = new HashMap<>();
-//        for(POIRunnerData e: POIRunnerDataList){
-//            if(countMap.containsKey(e.getPOIId())){
-//                countMap.put(e.getPOIId(), countMap.get(e.getPOIId()) + 1);
-//            }else{
-//                countMap.put(e.getPOIId(), 1);
-//            }
-//        }
-
         // prepare response
         Response response = new Response();
+        // search the POI data
+        List<POIRunnerData> POIRunnerDataList = new ArrayList<>(poiRunnerDataRepository.findAll());
 
         // data for table
         response.setPoiRunnerData(POIRunnerDataList);
 
         // data for map
         List<POI> POIDataList = new ArrayList<>(poiRepository.findAll());
-        // pair with count
-//        List<POICount> poiCounts = new ArrayList<>();
-
-//        for(POI e: POIDataList){
-//            POICount newObj = new POICount(e);
-//            // Here should has the key
-//            newObj.setCount(countMap.getOrDefault(e.getPOIId(), 0));
-////            System.out.println("cnt:"+newObj.getCount());
-//            poiCounts.add(newObj);
-//        }
-
 
         response.setPoiData(POIDataList);
-
-//        POICountSaver poiCountSaver = new POICountSaver();
-//        poiCountSaver.storePOICountTable(POICountDataList);
 
         System.out.println("Sending POIRunner data to UI... Length: "+ POIRunnerDataList.size());
         System.out.println("Sending POICounts data to UI...Length: " + POIDataList.size());
