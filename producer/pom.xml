@@ -78,6 +78,7 @@
             <version>0.10.0.1</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>

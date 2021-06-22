@@ -24,7 +24,7 @@ public class POIInitializer {
     }
 
     //connecting to database
-    public boolean connectToMongoDB() {
+    public void connectToMongoDB() {
         System.out.println("POI initializer: connecting to mongo db...");
         try {
             mongoClient = MongoClients.create("mongodb://localhost:27017");
@@ -48,7 +48,6 @@ public class POIInitializer {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        return existFlag;
 
     }
 
