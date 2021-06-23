@@ -73,7 +73,10 @@ android (open app)
    - JSON string: "userId"
 
    - return POIs which the user passed in all the trips, no duplicates.
-## To run
+
+> Note: There are two ways to run this project, from scratch or from docker
+
+## To run from scratch
 This project is compatible with Java 11 and above.
 
 1. start Kafka
@@ -120,6 +123,62 @@ mvn exec:java
 ```shell
 cd ./producer
 mvn exec:java
+```
+
+## To run from docker
+1. Under the root folder RunSpec/
+
+start the services
+
+```
+docker-compose up
+```
+
+shut down the services
+
+```
+docker-compose down
+```
+
+
+2. run the project
+
+**Please install `mvn` tool firstly.**
+
+* adviser:
+```shell
+cd ./adviser
+mvn spring-boot:run
+```
+
+* statisticsboard:
+```shell
+cd ./statisticsboard
+mvn spring-boot:run
+```
+
+* processor:
+```shell
+cd ./processor
+mvn exec:java
+```
+
+* producer:
+```shell
+cd ./producer
+mvn exec:java
+```
+
+### Test API in PostMan
+POST `localhost:8182/producer/runningData`
+
+```json
+{
+    "longitude": 18.0722299999,
+    "latitude":59.34706999999,
+    "userId":34,
+    "tripId":8073
+}
 ```
 
 ## JMeter Load test
