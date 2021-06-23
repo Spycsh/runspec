@@ -27,8 +27,18 @@ public class ProducerHistoryTripDataRestService extends ServerResource {
 
 
         TripPOIDataReader tdr = new TripPOIDataReader();
-        tdr.connectDatabase();
+        boolean connectRes = tdr.connectDatabase();
+
+        if(!connectRes) {
+            return "database connection error";
+        }
+
+
         List<POIView> historyPoiViewList = tdr.getHistoryTripPOIData(userId);
+
+        if(historyPoiViewList.get(0).getName().equals("error")){
+            return "database server error";
+        }
 
         //pass pois to json string list
         System.out.println(historyPoiViewList.toString());

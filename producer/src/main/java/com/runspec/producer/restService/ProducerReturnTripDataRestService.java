@@ -29,9 +29,18 @@ public class ProducerReturnTripDataRestService extends ServerResource {
 
 
         TripPOIDataReader tdr = new TripPOIDataReader();
-        tdr.connectDatabase();
+
+
+        boolean connectRes = tdr.connectDatabase();
+        if(!connectRes){
+            return "database connection error";
+        }
+
         List<POIView> passedPoiViewList = tdr.getTripPOIData(userId, tripId);
 
+        if(passedPoiViewList.get(0).getName().equals("error")){
+            return "database server error";
+        }
         //pass pois to json string list
         System.out.println(passedPoiViewList.toString());
         JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(passedPoiViewList));

@@ -13,6 +13,12 @@ public class POIView implements Serializable {
 
     private double radius;
 
+    public POIView(){}
+
+    public POIView(String name){
+        this.name = name;
+    }
+
     public String getPOIId() {
         return POIId;
     }

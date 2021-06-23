@@ -13,10 +13,12 @@ public class POIData implements Serializable {
     private double radius;
     private int count;
 
+    public POIData(String name){
+        this.name = name;
+    }
     public POIData(){
 
     }
-
     public POIData(POIView poiView) {
         this.POIId = poiView.getPOIId();
         this.latitude = poiView.getLatitude();

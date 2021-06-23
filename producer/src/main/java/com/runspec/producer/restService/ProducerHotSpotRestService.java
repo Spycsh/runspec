@@ -29,15 +29,24 @@ public class ProducerHotSpotRestService extends ServerResource {
 //        String latitude = data.getString("latitude");
 
         TripPOIDataReader tdr = new TripPOIDataReader();
-        tdr.connectDatabase();
+        boolean connectRes = tdr.connectDatabase();
 
+        if(!connectRes){
+            return "database connection error";
+        }
         List<POIData> hotPoiDataList = tdr.getHotPoiData();
 
+        if(hotPoiDataList.get(0).getName().equals("error")){
+                return "database server error";
+        }
         //parse to json array
         JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(hotPoiDataList));
 
         System.out.println(jsonArray.toJSONString());
 
         return jsonArray.toJSONString();
+
+
+
     }
 }
