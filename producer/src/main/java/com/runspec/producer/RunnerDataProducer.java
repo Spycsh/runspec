@@ -5,12 +5,10 @@ package com.runspec.producer;
 //import com.alibaba.fastjson.JSONArray;
 import com.runspec.producer.util.RunnerDataSerializer;
 import com.runspec.producer.vo.RunnerData;
-import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.*;
 //import org.apache.kafka.clients.producer.Producer;
 //import kafka.javaapi.producer.Producer;
 import com.runspec.producer.util.PropertyFileReader;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.restlet.Component;
 import org.restlet.data.Protocol;
@@ -120,8 +118,6 @@ public class RunnerDataProducer {
      * @throws InterruptedException
      */
     public void sendEventToKafka(RunnerData runnerData) throws InterruptedException {
-        // encode, kafka send
-
 //        Random rand = new Random();
 //        System.out.println("Start testing!");
 //        while(true){
@@ -151,8 +147,30 @@ public class RunnerDataProducer {
 //                producer.send(data);
 
                 System.out.println("ready to send..."+runnerData.getLatitude()+":"+runnerData.getLongitude());
-                producer.send(new ProducerRecord<String, RunnerData>(topic, runnerData));
-//              System.out.println("send: ok");
+
+                // there are three ways to send from producer to processor the runnerData on the topic
+                // try{
+                    //
+                    // just send
+                    // producer.send(new ProducerRecord<String, RunnerData>(topic, runnerData));
+                    // synchronously send with Future.get()
+                    // producer.send(new ProducerRecord<String, RunnerData>(topic, runnerData)).get();
+                //} catch (Exception e){
+                //    e.printStackTrace();
+                //}
+                // asynchronously send with callback
+                producer.send(new ProducerRecord<String, RunnerData>(topic, runnerData), new Callback() {
+                    @Override
+                    public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+                        if(e!=null){
+                            e.printStackTrace();
+                        }else{
+                            System.out.println("The metadata of the record we just sent is: " +
+                                    recordMetadata.toString());
+                        }
+                    }
+                });
+
     }
 
 
