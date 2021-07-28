@@ -15,6 +15,7 @@ import org.restlet.data.Protocol;
 
 import java.util.*;
 
+
 /**
  * read the runner data from sensor and push it to KafKa Stream
  */
@@ -35,6 +36,9 @@ public class RunnerDataProducer {
         props.put("bootstrap.servers", "localhost:9092");
         props.put("key.serializer", StringSerializer.class);
         props.put("value.serializer", RunnerDataSerializer.class);
+
+        // add customized partition property
+        props.put("partitioner.class", "com.runspec.producer.util.CustomizedPartitioner");
 
         producer = new KafkaProducer<>(props);
 
@@ -159,7 +163,7 @@ public class RunnerDataProducer {
                 //    e.printStackTrace();
                 //}
                 // asynchronously send with callback
-                producer.send(new ProducerRecord<String, RunnerData>(topic, runnerData), new Callback() {
+                producer.send(new ProducerRecord<String, RunnerData>(topic, runnerData.getUserId(), runnerData), new Callback() {
                     @Override
                     public void onCompletion(RecordMetadata recordMetadata, Exception e) {
                         if(e!=null){
