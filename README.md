@@ -44,6 +44,9 @@ android (open app)
 
     - return a JSON string with weather and air information
 
+    for example, in postman
+    `POST http://localhost:8082/adviser/info?longitude=18.0722299999&latitude=59.34706999999`
+
 2. `http://localhost:8182/producer/runningData`
  
     - POST
@@ -105,6 +108,8 @@ C:\MongoDB\bin>mongod --dbpath=C:\MongoDB\data\db
 ```shell
 cd ./adviser
 mvn spring-boot:run
+# or use
+mvn org.springframework.boot:spring-boot-maven-plugin:run
 ```
 
 * statisticsboard: 
