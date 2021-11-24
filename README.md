@@ -84,6 +84,10 @@ This project is compatible with Java 11 and above.
 
 1. start Kafka
 
+```
+bin/kafka-server-start.sh config/server.properties
+```
+
 one terminal: 
 ```
 C:\kafka\bin\windows>zookeeper-server-start.bat ..\..\config\zookeeper.properties
@@ -102,35 +106,31 @@ C:\MongoDB\bin>mongod --dbpath=C:\MongoDB\data\db
 
 3. run the project
 
-**Please install `mvn` tool firstly.**
-
 * adviser:
 ```shell
 cd ./adviser
-mvn spring-boot:run
-# or use
-mvn org.springframework.boot:spring-boot-maven-plugin:run
+nohup ./mvnw org.springframework.boot:spring-boot-maven-plugin:run > myout.file 2>&1 &
 ```
 
 * statisticsboard: 
 ```shell
 cd ./statisticsboard
-mvn spring-boot:run
+nohup ./mvnw org.springframework.boot:spring-boot-maven-plugin:run > myout.file 2>&1 &
 ```
 
 * processor: 
 ```shell
 cd ./processor
-mvn exec:java
+./mvnq exec:java
 ```
 
 * producer: 
 ```shell
 cd ./producer
-mvn exec:java
+./mvnw exec:java
 ```
 
-## To run from docker
+<!-- ## To run from docker
 1. Under the root folder RunSpec/
 
 start the services
@@ -146,7 +146,7 @@ docker-compose down
 ```
 
 
-2. run the project
+2. run the project -->
 
 **Please install `mvn` tool firstly.**
 
@@ -215,6 +215,8 @@ In JMeter, create a `ThreadGroup` with 200 threads (users) in 1 loop. In the `HT
 - [x] add api to return the pois which the users passed by
 - [x] android get data from backend
 - [x] android UI demo
+- [ ] upgrade EC2
+- [ ] deployment on cluster
 <!-- - [ ] user login
 - [ ] running trace history
 - [ ] history of spots that a user has passed by -->
