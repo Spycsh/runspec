@@ -4,8 +4,10 @@
 ![platform](https://img.shields.io/badge/platform-android-green.svg)
 ![language](https://img.shields.io/badge/language-Java|Kotlin|Javascript|HTML|CSS-orange.svg) -->
 
-*specialize your running*
+-----
 
+*specialize your running*
+-----
 Sihan Chen sihanc@kth.se  
 Yuehao Sui yuehao@kth.se  
 Zidi Chen zidi@kth.se
