@@ -1,8 +1,8 @@
 # RunSpec
 
-![License](https://img.shields.io/badge/License-MIT-blue)
+<!-- ![License](https://img.shields.io/badge/License-MIT-blue)
 ![platform](https://img.shields.io/badge/platform-android-green.svg)
-![language](https://img.shields.io/badge/language-Java|Kotlin|Javascript|HTML|CSS-orange.svg)
+![language](https://img.shields.io/badge/language-Java|Kotlin|Javascript|HTML|CSS-orange.svg) -->
 
 *specialize your running*
 
