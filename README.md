@@ -84,10 +84,14 @@ This project is compatible with Java 11 and above.
 
 1. start Kafka
 
+On EC2
 ```
-bin/kafka-server-start.sh config/server.properties
+$ bin/zookeeper-server-start.sh config/zookeeper.properties
+$ bin/kafka-server-start.sh config/server.properties
+
 ```
 
+For Windows (local mode)
 one terminal: 
 ```
 C:\kafka\bin\windows>zookeeper-server-start.bat ..\..\config\zookeeper.properties
@@ -175,7 +179,10 @@ mvn exec:java
 ```
 
 ### Test API in PostMan
-POST `localhost:8182/producer/runningData`
+
+POST `http://13.53.101.158:8082/adviser/info?longitude=18.0722299999&latitude=59.34706999999`
+
+POST `http://13.53.101.158:8182/producer/runningData`
 
 ```json
 {
