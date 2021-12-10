@@ -174,7 +174,7 @@ public class RunnerDataProducer {
                         }
                     }
                 });
-
+        producer.close();
     }
 
 
