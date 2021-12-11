@@ -3,6 +3,7 @@ package com.runspec.producer;
 //import org.apache.kafka.clients.producer.KafkaProducer;
 
 //import com.alibaba.fastjson.JSONArray;
+import com.runspec.producer.util.CustomizedPartitioner;
 import com.runspec.producer.util.RunnerDataSerializer;
 import com.runspec.producer.vo.RunnerData;
 import org.apache.kafka.clients.producer.*;
@@ -38,7 +39,7 @@ public class RunnerDataProducer {
         props.put("value.serializer", RunnerDataSerializer.class);
 
         // add customized partition property
-        props.put("partitioner.class", "com.runspec.producer.util.CustomizedPartitioner");
+        props.put("partitioner.class", CustomizedPartitioner.class);
 
         producer = new KafkaProducer<>(props);
 
